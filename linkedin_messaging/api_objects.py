@@ -4,6 +4,7 @@ from typing import Any, List, Optional
 
 import dataclasses_json
 from dataclasses_json import (
+    CatchAll,
     config,
     DataClassJsonMixin,
     dataclass_json,
@@ -238,7 +239,7 @@ class ReactionSummary:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class ConversationEvent:
+class ConversationEvent(DataClassJsonMixin):
     created_at: datetime
     entity_urn: URN
     event_content: EventContent

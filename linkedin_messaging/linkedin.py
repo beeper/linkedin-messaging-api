@@ -1,18 +1,33 @@
+import asyncio
 import json
+import logging
 import pickle
+from collections import defaultdict
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import (
+    Any,
+    Awaitable,
+    Callable,
+    Coroutine,
+    DefaultDict,
+    Dict,
+    List,
+    Optional,
+    Union,
+)
 
 import aiohttp
 from bs4 import BeautifulSoup
+from dataclasses_json import DataClassJsonMixin
 
 from .api_objects import (
-    ConversationsResponse,
+    ConversationEvent,
     ConversationResponse,
-    MessageAttachment,
+    ConversationsResponse,
     MessageAttachmentCreate,
     MessageCreate,
     Picture,
+    ReactionSummary,
     SendMessageResponse,
     URN,
     UserProfileResponse,
@@ -57,9 +72,11 @@ class ChallengeException(Exception):
 class LinkedInMessaging:
     session: aiohttp.ClientSession
     two_factor_payload: Dict[str, Any]
+    event_listeners: DefaultDict[str, List[Callable[[Any], Awaitable[None]]]]
 
     def __init__(self):
         self.session = aiohttp.ClientSession()
+        self.event_listeners = defaultdict(list)
 
     @staticmethod
     def from_pickle(pickle_str: bytes) -> "LinkedInMessaging":
@@ -84,8 +101,7 @@ class LinkedInMessaging:
 
     # region Authentication
 
-    @property
-    def logged_in(self) -> bool:
+    async def logged_in(self) -> bool:
         cookie_names = {c.key for c in self.session.cookie_jar}
         if (
             "liap" not in cookie_names
@@ -93,7 +109,7 @@ class LinkedInMessaging:
             or "JSESSIONID" not in cookie_names
         ):
             return False
-        return bool(self.get_user_profile())
+        return bool(await self.get_user_profile())
 
     async def login(self, email: str, password: str):
         # Get the CSRF token.
@@ -115,7 +131,7 @@ class LinkedInMessaging:
         ) as login_response:
             # Check to see if the user was successfully logged in with just email and
             # password.
-            if self.logged_in:
+            if self.logged_in():
                 for c in self.session.cookie_jar:
                     if c.key == "JSESSIONID":
                         self.session.headers["csrf-token"] = c.value.strip('"')
@@ -152,7 +168,7 @@ class LinkedInMessaging:
         async with self.session.post(
             VERIFY_URL, data={**self.two_factor_payload, "pin": two_factor_code}
         ):
-            if self.logged_in:
+            if self.logged_in():
                 for c in self.session.cookie_jar:
                     if c.key == "JSESSIONID":
                         self.session.headers["csrf-token"] = c.value.strip('"')
@@ -304,5 +320,60 @@ class LinkedInMessaging:
             + picture.vector_image.artifacts[-1].file_identifying_url_path_segment
         )
         return await resp.content.read()
+
+    # endregion
+
+    # region Event Listener
+
+    def add_event_listener(
+        self,
+        payload_key: str,
+        fn: Callable[[Any], Awaitable[None]],
+    ):
+        self.event_listeners[payload_key].append(fn)
+
+    object_translation_map: Dict[str, DataClassJsonMixin] = {
+        "event": ConversationEvent,
+        "reactionSummary": ReactionSummary,
+    }
+
+    async def _fire(self, payload_key: str, event: Any):
+        for listener in self.event_listeners[payload_key]:
+            await listener(event)
+
+    async def _listen_to_event_stream(self):
+        logging.info("Starting event stream listener")
+
+        async with self.session.get(
+            "https://realtime.www.linkedin.com/realtime/connect",
+            headers={"content-type": "text/event-stream", **REQUEST_HEADERS},
+            timeout=2 ** 128,
+        ) as resp:
+            while True:
+                chunk = await resp.content.readline()
+                if not chunk:
+                    break
+                if not chunk.startswith(b"data:"):
+                    continue
+                data = json.loads(chunk.decode("utf-8")[6:])
+                event_payload = data.get(
+                    "com.linkedin.realtimefrontend.DecoratedEvent", {}
+                ).get("payload", {})
+
+                # TODO this should probably pass the entire event_payload to the
+                # translation map
+                for key, translate_to in self.object_translation_map.items():
+                    value = event_payload.get(key)
+                    if value is not None:
+                        await self._fire(key, translate_to.from_dict(value))
+
+        logging.info("Event stream closed")
+
+    async def start_listener(self):
+        try:
+            while True:
+                await self._listen_to_event_stream()
+        except Exception as e:
+            logging.exception(f"Error listening to event stream: {e}")
 
     # endregion
