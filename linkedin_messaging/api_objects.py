@@ -18,13 +18,22 @@ class URN:
         self.prefix = ":".join(urn_parts[:-1])
         self.id_parts = urn_parts[-1].strip("()").split(",")
 
-    def __repr__(self):
-        return "URN({}:{})".format(
+    def get_id(self):
+        assert len(self.id_parts) == 1
+        return self.id_parts[0]
+
+    def __str__(self):
+        return "{}:{}".format(
             self.prefix,
-            self.id_parts[0]
-            if len(self.id_parts) == 1
-            else "(" + ",".join(self.id_parts) + ")",
+            (
+                self.id_parts[0]
+                if len(self.id_parts) == 1
+                else "(" + ",".join(self.id_parts) + ")"
+            ),
         )
+
+    def __repr__(self):
+        return f"URN('{str(self)}')"
 
 
 # Use milliseconds instead of seconds from the UNIX epoch.
@@ -34,7 +43,7 @@ decoder_functions = {
 }
 encoder_functions = {
     datetime: (lambda d: int(d.timestamp() * 1000) if d else None),
-    URN: (lambda u: u.id_parts[-1] if u else None),
+    URN: (lambda u: str(u) if u else None),
 }
 
 for type_, translation_function in decoder_functions.items():
@@ -128,16 +137,78 @@ class Attribute:
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class AttributedBody:
-    text: str
+    text: str = ""
     attributes: List[Attribute] = field(default_factory=list)
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL)
 @dataclass
+class MessageAttachmentCreate:
+    byte_size: int
+    id_: URN = field(metadata=config(field_name="id"))
+    media_type: str
+    name: str
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class MessageAttachmentReference:
+    string: str
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class MessageAttachment:
+    byte_size: int
+    id_: URN = field(metadata=config(field_name="id"))
+    media_type: str
+    name: str
+    reference: MessageAttachmentReference
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class GifInfo:
+    original_height: int
+    original_width: int
+    url: str
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class ThirdPartyMediaInfo:
+    previewgif: GifInfo
+    nanogif: GifInfo
+    gif: GifInfo
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class ThirdPartyMedia:
+    media_type: str
+    id_: str = field(metadata=config(field_name="id"))
+    media: ThirdPartyMediaInfo
+    title: str
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class MessageCustomContent:
+    third_party_media: ThirdPartyMedia = field(
+        metadata=config(
+            field_name="com.linkedin.voyager.messaging.shared.ThirdPartyMedia"
+        )
+    )
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
 class MessageEvent:
-    message_body_render_format: str
-    body: str
     attributed_body: AttributedBody
+    body: str
+    message_body_render_format: str
+    attachments: List[MessageAttachment] = field(default_factory=list)
+    custom_content: Optional[MessageCustomContent] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -169,12 +240,12 @@ class ReactionSummary:
 @dataclass
 class ConversationEvent:
     created_at: datetime
-    reaction_summaries: List[ReactionSummary]
     entity_urn: URN
     event_content: EventContent
     subtype: str
     from_: From = field(metadata=config(field_name="from"))
     previous_event_in_conversation: Optional[URN] = None
+    reaction_summaries: List[ReactionSummary] = field(default_factory=list)
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -198,12 +269,14 @@ class Conversation:
     participants: List[Participant]
 
 
+@dataclass_json(letter_case=LetterCase.CAMEL)
 @dataclass
 class ConversationsResponse(DataClassJsonMixin):
     elements: List[Conversation]
     paging: Paging
 
 
+@dataclass_json(letter_case=LetterCase.CAMEL)
 @dataclass
 class ConversationResponse(DataClassJsonMixin):
     elements: List[ConversationEvent]
@@ -212,14 +285,30 @@ class ConversationResponse(DataClassJsonMixin):
 
 @dataclass_json(letter_case=LetterCase.CAMEL)
 @dataclass
-class MessageAttachment:
-    pass
+class MessageCreate(DataClassJsonMixin):
+    attributed_body: AttributedBody
+    body: str = ""
+    attachments: List[MessageAttachmentCreate] = field(default_factory=list)
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL)
 @dataclass
-class MessageCreate:
-    body: str
-    attachments: List[Any]
-    attributed_body: AttributedBody
-    media_attachments: List[Any]
+class MessageCreatedInfo:
+    created_at: datetime
+    event_urn: URN
+    backend_event_urn: URN
+    conversation_urn: URN
+    backend_conversation_urn: URN
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class SendMessageResponse(DataClassJsonMixin):
+    value: MessageCreatedInfo
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class UserProfileResponse(DataClassJsonMixin):
+    plain_id: str
+    mini_profile: MiniProfile

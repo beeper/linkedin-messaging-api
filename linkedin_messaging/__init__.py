@@ -1,4 +1,3 @@
-from .api_objects import URN
 from .linkedin import ChallengeException, LinkedInMessaging
 
 __title__ = "linkedin_messaging"
@@ -10,4 +9,4 @@ __license__ = "MIT"
 __author__ = "Sumner Evans"
 __email__ = "inquiries@sumnerevans.com"
 
-__all__ = ("LinkedInMessaging",)
+__all__ = ("ChallengeException", "LinkedInMessaging")

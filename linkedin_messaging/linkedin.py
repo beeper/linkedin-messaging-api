@@ -1,12 +1,22 @@
 import json
 import pickle
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import aiohttp
 from bs4 import BeautifulSoup
 
-from .api_objects import ConversationsResponse, ConversationResponse, URN
+from .api_objects import (
+    ConversationsResponse,
+    ConversationResponse,
+    MessageAttachment,
+    MessageAttachmentCreate,
+    MessageCreate,
+    Picture,
+    SendMessageResponse,
+    URN,
+    UserProfileResponse,
+)
 
 REQUEST_HEADERS = {
     "user-agent": " ".join(
@@ -69,7 +79,21 @@ class LinkedInMessaging:
     async def _get(self, relative_url: str, **kwargs) -> aiohttp.ClientResponse:
         return await self.session.get(API_BASE_URL + relative_url, **kwargs)
 
+    async def _post(self, relative_url: str, **kwargs) -> aiohttp.ClientResponse:
+        return await self.session.post(API_BASE_URL + relative_url, **kwargs)
+
     # region Authentication
+
+    @property
+    def logged_in(self) -> bool:
+        cookie_names = {c.key for c in self.session.cookie_jar}
+        if (
+            "liap" not in cookie_names
+            or "li_at" not in cookie_names
+            or "JSESSIONID" not in cookie_names
+        ):
+            return False
+        return bool(self.get_user_profile())
 
     async def login(self, email: str, password: str):
         # Get the CSRF token.
@@ -91,12 +115,7 @@ class LinkedInMessaging:
         ) as login_response:
             # Check to see if the user was successfully logged in with just email and
             # password.
-            cookie_names = {c.key for c in self.session.cookie_jar}
-            if (
-                "liap" in cookie_names
-                and "li_at" in cookie_names
-                and "JSESSIONID" in cookie_names
-            ):
+            if self.logged_in:
                 for c in self.session.cookie_jar:
                     if c.key == "JSESSIONID":
                         self.session.headers["csrf-token"] = c.value.strip('"')
@@ -133,12 +152,7 @@ class LinkedInMessaging:
         async with self.session.post(
             VERIFY_URL, data={**self.two_factor_payload, "pin": two_factor_code}
         ):
-            cookie_names = {c.key for c in self.session.cookie_jar}
-            if (
-                "liap" in cookie_names
-                and "li_at" in cookie_names
-                and "JSESSIONID" in cookie_names
-            ):
+            if self.logged_in:
                 for c in self.session.cookie_jar:
                     if c.key == "JSESSIONID":
                         self.session.headers["csrf-token"] = c.value.strip('"')
@@ -148,6 +162,8 @@ class LinkedInMessaging:
 
     # endregion
 
+    # region Conversations
+
     async def get_conversations(
         self,
         last_activity_before: Optional[datetime] = None,
@@ -155,11 +171,8 @@ class LinkedInMessaging:
         """
         Fetch list of conversations the user is in.
 
-        :param last_activity_before: datetime of the last chat activity to consider
-        :type last_activity_before: datetime?
-
-        :return: List of conversations
-        :rtype: list
+        :param last_activity_before: :class:`datetime` of the last chat activity to
+            consider
         """
         if last_activity_before is None:
             last_activity_before = datetime.now()
@@ -180,16 +193,10 @@ class LinkedInMessaging:
         created_before: Optional[datetime] = None,
     ) -> ConversationResponse:
         """
-        Fetch data about a given conversation.
+        Fetch the given conversation.
 
-        :param conversation_urn_id: LinkedIn URN ID for a conversation
-        :type conversation_urn_id: str
-
+        :param conversation_urn_id: LinkedIn URN for a conversation
         :param created_before: datetime of the last chat activity to consider
-        :type created_before: datetime?
-
-        :return: Conversation data
-        :rtype: dict
         """
         if len(conversation_urn.id_parts) != 1:
             raise TypeError(f"Invalid conversation URN {conversation_urn}.")
@@ -206,3 +213,96 @@ class LinkedInMessaging:
             params=params,
         )
         return ConversationResponse.from_json(await conversations_resp.text())
+
+    async def upload_media(
+        self,
+        data: bytes,
+        filename: str,
+        media_type: str,
+    ) -> MessageAttachmentCreate:
+        upload_metadata_response = await self._post(
+            "/voyagerMediaUploadMetadata",
+            params={"action": "upload"},
+            json={
+                "mediaUploadType": "MESSAGING_PHOTO_ATTACHMENT",
+                "fileSize": len(data),
+                "filename": filename,
+            },
+        )
+        if upload_metadata_response.status != 200:
+            raise Exception("Failed to send upload metadata.")
+
+        upload_metadata_response_json = (await upload_metadata_response.json()).get(
+            "value", {}
+        )
+        upload_url = upload_metadata_response_json.get("singleUploadUrl")
+        if not upload_url:
+            raise Exception("No upload URL provided")
+
+        upload_response = await self.session.put(upload_url, data=data)
+        if upload_response.status != 201:
+            # TODO is there any other data that we get?
+            raise Exception("Failed to upload file.")
+
+        return MessageAttachmentCreate(
+            len(data),
+            URN(upload_metadata_response_json.get("urn")),
+            media_type,
+            filename,
+        )
+
+    async def send_message(
+        self,
+        conversation_urn_or_recipients: Union[URN, List[URN]],
+        message_create: MessageCreate,
+    ) -> SendMessageResponse:
+        params = {"action": "create"}
+        message_create_key = "com.linkedin.voyager.messaging.create.MessageCreate"
+
+        message_event: Dict[str, Any] = {
+            "eventCreate": {"value": {message_create_key: message_create.to_dict()}}
+        }
+
+        if isinstance(conversation_urn_or_recipients, list):
+            message_event["recipients"] = [
+                r.get_id() for r in conversation_urn_or_recipients
+            ]
+            message_event["subtype"] = "MEMBER_TO_MEMBER"
+            payload = {
+                "keyVersion": "LEGACY_INBOX",
+                "conversationCreate": message_event,
+            }
+            res = await self._post(
+                "/messaging/conversations",
+                params=params,
+                json=payload,
+            )
+        else:
+            conversation_id = conversation_urn_or_recipients.get_id()
+            res = await self._post(
+                f"/messaging/conversations/{conversation_id}/events",
+                params=params,
+                json=message_event,
+            )
+
+        return SendMessageResponse.from_json(await res.text())
+
+    async def download_linkedin_media(self, url: str) -> bytes:
+        return await (await self.session.get(url)).content.read()
+
+    # endregion
+
+    # region Profiles
+
+    async def get_user_profile(self) -> UserProfileResponse:
+        response = await self._get("/me")
+        return UserProfileResponse.from_json(await response.text())
+
+    async def download_profile_picture(self, picture: Picture) -> bytes:
+        resp = await self.session.get(
+            picture.vector_image.root_url
+            + picture.vector_image.artifacts[-1].file_identifying_url_path_segment
+        )
+        return await resp.content.read()
+
+    # endregion
