@@ -97,25 +97,42 @@ class MessagingMember:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class ConversationsResponseMetadata:
-    unread_count: int
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ConversationsResponsePaging:
+class Paging:
     count: int
     start: int
     links: List[Any]
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class TextEntity:
+    urn: URN
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class AttributeType:
+    text_entity: TextEntity = field(
+        metadata=config(field_name="com.linkedin.pemberly.text.Entity")
+    )
+
+
+@dataclass_json
+@dataclass
+class Attribute:
+    start: int
+    length: int
+    type_: AttributeType = field(metadata=config(field_name="type"))
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class AttributedBody:
     text: str
+    attributes: List[Attribute] = field(default_factory=list)
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass_json(letter_case=LetterCase.CAMEL)
 @dataclass
 class MessageEvent:
     message_body_render_format: str
@@ -141,9 +158,18 @@ class From:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class ReactionSummary:
+    count: int
+    first_reacted_at: datetime
+    emoji: str
+    viewer_reacted: bool
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class ConversationEvent:
     created_at: datetime
-    reaction_summaries: List[Any]
+    reaction_summaries: List[ReactionSummary]
     entity_urn: URN
     event_content: EventContent
     subtype: str
@@ -172,9 +198,28 @@ class Conversation:
     participants: List[Participant]
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class ConversationsResponse(DataClassJsonMixin):
-    metadata: ConversationsResponseMetadata
     elements: List[Conversation]
-    paging: ConversationsResponsePaging
+    paging: Paging
+
+
+@dataclass
+class ConversationResponse(DataClassJsonMixin):
+    elements: List[ConversationEvent]
+    paging: Paging
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class MessageAttachment:
+    pass
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class MessageCreate:
+    body: str
+    attachments: List[Any]
+    attributed_body: AttributedBody
+    media_attachments: List[Any]

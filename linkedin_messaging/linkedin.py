@@ -1,12 +1,12 @@
 import json
 import pickle
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import aiohttp
 from bs4 import BeautifulSoup
 
-from .api_objects import ConversationsResponse
+from .api_objects import ConversationsResponse, ConversationResponse, URN
 
 REQUEST_HEADERS = {
     "user-agent": " ".join(
@@ -68,6 +68,8 @@ class LinkedInMessaging:
 
     async def _get(self, relative_url: str, **kwargs) -> aiohttp.ClientResponse:
         return await self.session.get(API_BASE_URL + relative_url, **kwargs)
+
+    # region Authentication
 
     async def login(self, email: str, password: str):
         # Get the CSRF token.
@@ -144,9 +146,21 @@ class LinkedInMessaging:
             # TODO can we scrape anything from the page?
             raise Exception("Failed to log in.")
 
+    # endregion
+
     async def get_conversations(
-        self, last_activity_before=None
+        self,
+        last_activity_before: Optional[datetime] = None,
     ) -> ConversationsResponse:
+        """
+        Fetch list of conversations the user is in.
+
+        :param last_activity_before: datetime of the last chat activity to consider
+        :type last_activity_before: datetime?
+
+        :return: List of conversations
+        :rtype: list
+        """
         if last_activity_before is None:
             last_activity_before = datetime.now()
 
@@ -159,6 +173,36 @@ class LinkedInMessaging:
 
         conversations_resp = await self._get("/messaging/conversations", params=params)
         return ConversationsResponse.from_json(await conversations_resp.text())
-        j = json.loads(await x.text())
-        print(cr.paging)
-        return x
+
+    async def get_conversation(
+        self,
+        conversation_urn: URN,
+        created_before: Optional[datetime] = None,
+    ) -> ConversationResponse:
+        """
+        Fetch data about a given conversation.
+
+        :param conversation_urn_id: LinkedIn URN ID for a conversation
+        :type conversation_urn_id: str
+
+        :param created_before: datetime of the last chat activity to consider
+        :type created_before: datetime?
+
+        :return: Conversation data
+        :rtype: dict
+        """
+        if len(conversation_urn.id_parts) != 1:
+            raise TypeError(f"Invalid conversation URN {conversation_urn}.")
+
+        if created_before is None:
+            created_before = datetime.now()
+
+        params = {
+            "createdBefore": int(created_before.timestamp() * 1000),
+        }
+
+        conversations_resp = await self._get(
+            f"/messaging/conversations/{conversation_urn.id_parts[0]}/events",
+            params=params,
+        )
+        return ConversationResponse.from_json(await conversations_resp.text())
