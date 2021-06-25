@@ -1,24 +1,33 @@
 [tool.poetry]
 name = "linkedin-messaging-api"
-version = "0.0.1"
-description = "msmtp wrapper allowing for offline use"
+version = "0.1.0"
+description = "An unofficial API for interacting with LinkedIn Messaging"
 authors = ["Sumner Evans <inquiries@sumnerevans.com>"]
 license = "Apache-2.0"
 readme = "README.md"
-# repository = "https://sr.ht/~sumner/offlinemsmtp"
+repository = "https://github.com/sumnerevans/linkedin-messaging-api"
 keywords = ["LinkedIn", "messaging"]
 classifiers = [
-    #   3 - Alpha
-    #   4 - Beta
-    #   5 - Production/Stable
     "Development Status :: 3 - Alpha",
+    "Framework :: AsyncIO",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Communications :: Chat",
+    "Topic :: Software Development :: Libraries",
 ]
 
 [tool.poetry.urls]
-# "Bug Tracker" = "https://todo.sr.ht/~sumner/offlinemsmtp"
+"Bug Tracker" = "https://github.com/sumnerevans/linkedin-messaging-api/issues"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.7"
 aiohttp = "^3.7.4"
 beautifulsoup4 = "^4.9.3"
 dataclasses-json = "^0.5.4"

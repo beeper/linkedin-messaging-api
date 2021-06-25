@@ -4,7 +4,6 @@ from typing import Any, List, Optional
 
 import dataclasses_json
 from dataclasses_json import (
-    CatchAll,
     config,
     DataClassJsonMixin,
     dataclass_json,
