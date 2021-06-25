@@ -7,6 +7,7 @@ from typing import (
     Any,
     Awaitable,
     Callable,
+    cast,
     DefaultDict,
     Dict,
     List,
@@ -331,8 +332,8 @@ class LinkedInMessaging:
         self.event_listeners[payload_key].append(fn)
 
     object_translation_map: Dict[str, DataClassJsonMixin] = {
-        "event": ConversationEvent,
-        "reactionSummary": ReactionSummary,
+        "event": cast(DataClassJsonMixin, ConversationEvent),
+        "reactionSummary": cast(DataClassJsonMixin, ReactionSummary),
     }
 
     async def _fire(self, payload_key: str, event: Any):
