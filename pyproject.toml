@@ -41,6 +41,18 @@ jedi = "^0.17.2"
 mypy = "^0.782"
 pytest = "^6.2.4"
 termcolor = "^1.1.0"
+pytest-cov = "^2.12.1"
+
+[tool.pytest.ini_options]
+addopts = """
+    -vvv
+    --doctest-modules
+    --ignore-glob='examples/*'
+    --ignore-glob='cicd/*'
+    --cov=linkedin_messaging
+    --cov-report html
+    --cov-report term
+"""
 
 [build-system]
 requires = ["poetry>=0.12"]

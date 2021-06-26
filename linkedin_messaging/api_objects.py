@@ -35,6 +35,11 @@ class URN:
             ),
         )
 
+    def __eq__(self, other: Any):
+        if not isinstance(other, URN):
+            return False
+        return self.id_parts == other.id_parts
+
     def __repr__(self):
         return f"URN('{str(self)}')"
 
