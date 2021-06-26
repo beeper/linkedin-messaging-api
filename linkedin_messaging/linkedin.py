@@ -80,6 +80,7 @@ class LinkedInMessaging:
     @staticmethod
     def from_pickle(pickle_str: bytes) -> "LinkedInMessaging":
         linkedin = LinkedInMessaging()
+        assert isinstance(linkedin.session.cookie_jar, aiohttp.CookieJar)
         linkedin.session.cookie_jar._cookies = pickle.loads(pickle_str)
         for c in linkedin.session.cookie_jar:
             if c.key == "JSESSIONID":
@@ -87,6 +88,7 @@ class LinkedInMessaging:
         return linkedin
 
     def to_pickle(self) -> bytes:
+        assert isinstance(self.session.cookie_jar, aiohttp.CookieJar)
         return pickle.dumps(self.session.cookie_jar._cookies)
 
     async def close(self):

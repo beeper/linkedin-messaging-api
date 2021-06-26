@@ -1,6 +1,6 @@
 from datetime import datetime
 from dataclasses import dataclass, field
-from typing import Any, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import dataclasses_json
 from dataclasses_json import (
@@ -41,7 +41,7 @@ decoder_functions = {
     datetime: (lambda s: datetime.fromtimestamp(int(s) / 1000) if s else None),
     URN: (lambda s: URN(s) if s else None),
 }
-encoder_functions = {
+encoder_functions: Dict[Any, Callable[[Any], Any]] = {
     datetime: (lambda d: int(d.timestamp() * 1000) if d else None),
     URN: (lambda u: str(u) if u else None),
 }
