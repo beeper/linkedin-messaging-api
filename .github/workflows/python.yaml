@@ -1,15 +1,17 @@
-# Tests on Python 3.7+
-name: Python Test
+name: Python
 
 on:
   push:
     branches: [ "*" ]
   pull_request:
     branches: [ master ]
+  release:
+    types:
+      - created
 
 jobs:
-  build:
-
+  lint:
+    name: Run linters
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -41,3 +43,71 @@ jobs:
       if: always()
       run: |
         poetry run mypy .
+
+    - name: Run custom style checks
+      if: always()
+      run: |
+        poetry run cicd/custom_style_check.py
+
+  # test:
+  #   name: Run the tests
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       python-version: [ 3.7, 3.8, 3.9 ]
+
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: Set up Python ${{ matrix.python-version }}
+  #     uses: actions/setup-python@v2
+  #     with:
+  #       python-version: ${{ matrix.python-version }}
+  #   - name: Run image
+  #     uses: abatilo/actions-poetry@v2.1.2
+  #   - name: Run pytest
+  #     run: |
+  #       poetry run pytest -vv
+
+  build:
+    name: Build linkedin_messaging
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ 3.7, 3.8, 3.9 ]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Run image
+      uses: abatilo/actions-poetry@v2.1.2
+    - name: Run build
+      run: |
+        poetry build
+
+  deploy:
+    name: Deploy to pypi
+    runs-on: ubuntu-latest
+    needs: [lint, build]
+    if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Run image
+      uses: abatilo/actions-poetry@v2.1.2
+
+    - name: Dry run publish
+      run: |
+        poetry config pypi-token.pypi ${{ secrets.PYPI_DEPLOY_TOKEN }}
+        poetry publish --build --dry-run
+
+    - name: Actual publish
+      run: |
+        poetry config pypi-token.pypi ${{ secrets.PYPI_DEPLOY_TOKEN }}
+        poetry publish --build

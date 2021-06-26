@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "linkedin-messaging-api"
+name = "linkedin_messaging"
 version = "0.1.0"
 description = "An unofficial API for interacting with LinkedIn Messaging"
 authors = ["Sumner Evans <inquiries@sumnerevans.com>"]
@@ -39,6 +39,8 @@ flake8 = "^3.8.3"
 flake8-pep3101 = "^1.3.0"
 jedi = "^0.17.2"
 mypy = "^0.782"
+pytest = "^6.2.4"
+termcolor = "^1.1.0"
 
 [build-system]
 requires = ["poetry>=0.12"]
