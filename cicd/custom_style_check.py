@@ -28,7 +28,7 @@ def noqa_re(error_id: str = "") -> Pattern:
     return re.compile(rf"#\s*noqa(:\s*{error_id})?\s*\n$")
 
 
-def eprint(*strings):
+def eprint(*strings: str):
     cprint(" ".join(strings), "red", end="", attrs=["bold"])
 
 

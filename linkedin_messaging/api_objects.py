@@ -18,14 +18,14 @@ class URN:
         self.prefix = ":".join(urn_parts[:-1])
         self.id_parts = urn_parts[-1].strip("()").split(",")
 
-    def get_id(self):
+    def get_id(self) -> str:
         assert len(self.id_parts) == 1
         return self.id_parts[0]
 
-    def id_str(self):
+    def id_str(self) -> str:
         return ",".join(self.id_parts)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "{}:{}".format(
             self.prefix,
             (
@@ -43,7 +43,7 @@ class URN:
             return False
         return self.id_parts == other.id_parts
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"URN('{str(self)}')"
 
 

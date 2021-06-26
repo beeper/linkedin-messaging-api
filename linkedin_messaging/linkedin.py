@@ -73,7 +73,9 @@ class ChallengeException(Exception):
 class LinkedInMessaging:
     session: aiohttp.ClientSession
     two_factor_payload: Dict[str, Any]
-    event_listeners: DefaultDict[str, List[Callable[[Any], Awaitable[None]]]]
+    event_listeners: DefaultDict[
+        str, List[Callable[[RealTimeEventStreamEvent], Awaitable[None]]]
+    ]
 
     def __init__(self):
         self.session = aiohttp.ClientSession()
@@ -96,10 +98,10 @@ class LinkedInMessaging:
     async def close(self):
         await self.session.close()
 
-    async def _get(self, relative_url: str, **kwargs) -> aiohttp.ClientResponse:
+    async def _get(self, relative_url: str, **kwargs: Any) -> aiohttp.ClientResponse:
         return await self.session.get(API_BASE_URL + relative_url, **kwargs)
 
-    async def _post(self, relative_url: str, **kwargs) -> aiohttp.ClientResponse:
+    async def _post(self, relative_url: str, **kwargs: Any) -> aiohttp.ClientResponse:
         return await self.session.post(API_BASE_URL + relative_url, **kwargs)
 
     # region Authentication
@@ -375,7 +377,7 @@ class LinkedInMessaging:
     def add_event_listener(
         self,
         payload_key: str,
-        fn: Callable[[Any], Awaitable[None]],
+        fn: Callable[[RealTimeEventStreamEvent], Awaitable[None]],
     ):
         self.event_listeners[payload_key].append(fn)
 

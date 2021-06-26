@@ -42,6 +42,7 @@ mypy = "^0.782"
 pytest = "^6.2.4"
 termcolor = "^1.1.0"
 pytest-cov = "^2.12.1"
+flake8-annotations = "^2.6.2"
 
 [tool.pytest.ini_options]
 addopts = """

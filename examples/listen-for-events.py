@@ -3,6 +3,7 @@ from pathlib import Path
 
 import asyncio
 from linkedin_messaging import LinkedInMessaging, ChallengeException
+from linkedin_messaging.api_objects import RealTimeEventStreamEvent
 
 cookie_path = Path(__file__).parent.joinpath("cookies.pickle")
 
@@ -25,7 +26,7 @@ async def main():
         with open(cookie_path, "wb+") as cf:
             cf.write(linkedin.to_pickle())
 
-    async def on_event(event):
+    async def on_event(event: RealTimeEventStreamEvent):
         print(event)
 
     linkedin.add_event_listener("event", on_event)
