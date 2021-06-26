@@ -1,3 +1,10 @@
+# v0.1.3
+
+* Made the `URN` object hashable. This is useful for using `URN`s as keys for
+  dictionaries
+* Added more function type annotations and enforced using annotations via
+  flake8-annotations.
+
 # v0.1.2
 
 * Add a few convenience methods for URNs.
