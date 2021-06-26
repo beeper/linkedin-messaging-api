@@ -82,10 +82,10 @@ class LinkedInMessaging:
         self.event_listeners = defaultdict(list)
 
     @staticmethod
-    def from_pickle(pickle_str: bytes) -> "LinkedInMessaging":
+    def from_pickle(pickle_byte_str: bytes) -> "LinkedInMessaging":
         linkedin = LinkedInMessaging()
         assert isinstance(linkedin.session.cookie_jar, aiohttp.CookieJar)
-        linkedin.session.cookie_jar._cookies = pickle.loads(pickle_str)
+        linkedin.session.cookie_jar._cookies = pickle.loads(pickle_byte_str)
         for c in linkedin.session.cookie_jar:
             if c.key == "JSESSIONID":
                 linkedin.session.headers["csrf-token"] = c.value.strip('"')
@@ -93,7 +93,7 @@ class LinkedInMessaging:
 
     def to_pickle(self) -> bytes:
         assert isinstance(self.session.cookie_jar, aiohttp.CookieJar)
-        return pickle.dumps(self.session.cookie_jar._cookies)
+        return pickle.dumps(self.session.cookie_jar._cookies, pickle.HIGHEST_PROTOCOL)
 
     async def close(self):
         await self.session.close()
