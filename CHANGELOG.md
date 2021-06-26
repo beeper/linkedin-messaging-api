@@ -1,3 +1,7 @@
+# v0.1.2
+
+* Add a few convenience methods.
+
 # v0.1.1
 
 This is the initial release. Features include:

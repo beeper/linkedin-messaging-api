@@ -22,6 +22,9 @@ class URN:
         assert len(self.id_parts) == 1
         return self.id_parts[0]
 
+    def id_str(self):
+        return ",".join(self.id_parts)
+
     def __str__(self):
         return "{}:{}".format(
             self.prefix,
