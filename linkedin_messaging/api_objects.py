@@ -238,7 +238,7 @@ class ReactionSummary:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class ConversationEvent(DataClassJsonMixin):
+class ConversationEvent:
     created_at: datetime
     entity_urn: URN
     event_content: EventContent
@@ -312,3 +312,18 @@ class SendMessageResponse(DataClassJsonMixin):
 class UserProfileResponse(DataClassJsonMixin):
     plain_id: str
     mini_profile: MiniProfile
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class RealTimeEventStreamEvent(DataClassJsonMixin):
+    # Message real-time events
+    previous_event_in_conversation: Optional[URN] = None
+    event: Optional[ConversationEvent] = None
+
+    # Reaction real-time events
+    reaction_added: Optional[bool] = None
+    actor_mini_profile_urn: Optional[URN] = None
+    event_urn: Optional[URN] = None
+    reaction_summary: Optional[ReactionSummary] = None
+    viewer_reacted: Optional[bool] = None
