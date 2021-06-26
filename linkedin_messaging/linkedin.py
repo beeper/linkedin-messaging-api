@@ -6,6 +6,7 @@ from collections import defaultdict
 from datetime import datetime
 from typing import (
     Any,
+    AsyncGenerator,
     Awaitable,
     Callable,
     DefaultDict,
@@ -19,6 +20,7 @@ import aiohttp
 from bs4 import BeautifulSoup
 
 from .api_objects import (
+    Conversation,
     ConversationResponse,
     ConversationsResponse,
     MessageAttachmentCreate,
@@ -218,6 +220,25 @@ class LinkedInMessaging:
 
         conversations_resp = await self._get("/messaging/conversations", params=params)
         return ConversationsResponse.from_json(await conversations_resp.text())
+
+    async def get_all_conversations(self) -> AsyncGenerator[Conversation, None]:
+        """
+        A generator of all of the user's conversations using paging.
+        """
+        last_activity_before = datetime.now()
+        while True:
+            conversations_response = await self.get_conversations(
+                last_activity_before=last_activity_before
+            )
+            for c in conversations_response.elements:
+                yield c
+
+            # The page size is 20, by default, so if we get less than 20, we are at the
+            # end of the list so we should stop.
+            if len(conversations_response.elements) < 20:
+                break
+
+            last_activity_before = conversations_response.elements[-1].last_activity_at
 
     async def get_conversation(
         self,

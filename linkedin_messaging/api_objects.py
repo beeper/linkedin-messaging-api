@@ -89,13 +89,11 @@ class Picture:
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class MiniProfile:
-    first_name: str
-    last_name: str
-    occupation: str
     entity_urn: URN
     public_identifier: str
-    tracking_id: str
-
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    occupation: Optional[str] = None
     memorialized: bool = False
     picture: Optional[Picture] = None
 
@@ -197,10 +195,11 @@ class ThirdPartyMedia:
 @dataclass_json(letter_case=LetterCase.CAMEL)
 @dataclass
 class MessageCustomContent:
-    third_party_media: ThirdPartyMedia = field(
+    third_party_media: Optional[ThirdPartyMedia] = field(
         metadata=config(
             field_name="com.linkedin.voyager.messaging.shared.ThirdPartyMedia"
-        )
+        ),
+        default=None,
     )
 
 
