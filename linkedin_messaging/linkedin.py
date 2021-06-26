@@ -141,7 +141,7 @@ class LinkedInMessaging:
             # 2FA is required. Throw an exception.
             soup = BeautifulSoup(await login_response.text(), "html.parser")
 
-            # TODO better detection of 2FA vs bad password
+            # TODO (#1) better detection of 2FA vs bad password
             if soup.find("input", {"name": "challengeId"}):
                 self.two_factor_payload = {
                     k: soup.find("input", {"name": k})["value"]
@@ -162,7 +162,7 @@ class LinkedInMessaging:
                 self.two_factor_payload["language"] = ("en-US",)
                 raise ChallengeException()
 
-            # TODO can we scrape anything from the page?
+            # TODO (#1) can we scrape anything from the page?
             raise Exception("Failed to log in.")
 
     async def enter_2fa(self, two_factor_code: str):
@@ -174,7 +174,7 @@ class LinkedInMessaging:
                     if c.key == "JSESSIONID":
                         self.session.headers["csrf-token"] = c.value.strip('"')
                 return
-            # TODO can we scrape anything from the page?
+            # TODO (#1) can we scrape anything from the page?
             raise Exception("Failed to log in.")
 
     # endregion
@@ -258,7 +258,7 @@ class LinkedInMessaging:
 
         upload_response = await self.session.put(upload_url, data=data)
         if upload_response.status != 201:
-            # TODO is there any other data that we get?
+            # TODO (#2) is there any other data that we get?
             raise Exception("Failed to upload file.")
 
         return MessageAttachmentCreate(
