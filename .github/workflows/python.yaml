@@ -102,12 +102,16 @@ jobs:
     - name: Run image
       uses: abatilo/actions-poetry@v2.1.2
 
+    - name: Run build
+      run: |
+        poetry build
+
     - name: Dry run publish
       run: |
         poetry config pypi-token.pypi ${{ secrets.PYPI_DEPLOY_TOKEN }}
-        poetry publish --build --dry-run
+        poetry publish --dry-run
 
     - name: Actual publish
       run: |
         poetry config pypi-token.pypi ${{ secrets.PYPI_DEPLOY_TOKEN }}
-        poetry publish --build
+        poetry publish
