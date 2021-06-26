@@ -320,7 +320,12 @@ class LinkedInMessaging:
         return SendMessageResponse.from_json(await res.text())
 
     async def download_linkedin_media(self, url: str) -> bytes:
-        return await (await self.session.get(url)).content.read()
+        async with self.session.get(url) as media_resp:
+            if not media_resp.ok:
+                raise Exception(
+                    f"Failed downloading media. Response code {media_resp.status}"
+                )
+            return await media_resp.content.read()
 
     # endregion
 
@@ -331,11 +336,16 @@ class LinkedInMessaging:
         return UserProfileResponse.from_json(await response.text())
 
     async def download_profile_picture(self, picture: Picture) -> bytes:
-        resp = await self.session.get(
+        url = (
             picture.vector_image.root_url
             + picture.vector_image.artifacts[-1].file_identifying_url_path_segment
         )
-        return await resp.content.read()
+        async with await self.session.get(url) as profile_resp:
+            if not profile_resp.ok:
+                raise Exception(
+                    f"Failed downloading media. Response code {profile_resp.status}"
+                )
+            return await profile_resp.content.read()
 
     # endregion
 
