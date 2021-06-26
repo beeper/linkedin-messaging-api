@@ -35,7 +35,10 @@ class URN:
             ),
         )
 
-    def __eq__(self, other: Any):
+    def __hash__(self) -> int:
+        return hash(self.id_str())
+
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, URN):
             return False
         return self.id_parts == other.id_parts
