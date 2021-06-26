@@ -1,6 +1,10 @@
 # v0.1.2
 
-* Add a few convenience methods.
+* Add a few convenience methods for URNs.
+* Add `get_all_conversations` async generator for iterating through all of the
+  user's conversations.
+* Add better error handling to download functions.
+* Add examples
 
 # v0.1.1
 
