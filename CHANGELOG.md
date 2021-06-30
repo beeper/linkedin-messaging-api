@@ -1,3 +1,7 @@
+# v0.1.4
+
+* Add `py.typed` file to indicate that the library has type hints.
+
 # v0.1.3
 
 * Made the `URN` object hashable. This is useful for using `URN`s as keys for

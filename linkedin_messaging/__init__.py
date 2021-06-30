@@ -2,7 +2,7 @@ from .linkedin import ChallengeException, LinkedInMessaging
 from .api_objects import URN
 
 __title__ = "linkedin_messaging"
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 __description__ = "An unofficial API for interacting with LinkedIn Messaging"
 
 __license__ = "MIT"
