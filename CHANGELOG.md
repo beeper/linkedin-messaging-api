@@ -1,3 +1,7 @@
+# v0.1.5
+
+* Add support for parsing InMail messages
+
 # v0.1.4
 
 * Add `py.typed` file to indicate that the library has type hints.

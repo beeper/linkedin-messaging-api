@@ -202,10 +202,52 @@ class ThirdPartyMedia:
 
 @dataclass_json(letter_case=LetterCase.CAMEL)
 @dataclass
+class LegalText:
+    static_legal_text: str
+    custom_legal_text: str
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class SpInmailStandardSubContent:
+    action: str
+    action_text: str
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class SpInmailSubContent:
+    third_party_media: Optional[SpInmailStandardSubContent] = field(
+        metadata=config(
+            field_name="com.linkedin.voyager.messaging.event.message.spinmail.SpInmailStandardSubContent"  # noqa: E501
+        ),
+        default=None,
+    )
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class SpInmailContent:
+    status: str
+    sp_inmail_type: str
+    advertiser_label: str
+    body: str
+    legal_text: Optional[LegalText] = None
+    sub_content: Optional[SpInmailSubContent] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
 class MessageCustomContent:
     third_party_media: Optional[ThirdPartyMedia] = field(
         metadata=config(
             field_name="com.linkedin.voyager.messaging.shared.ThirdPartyMedia"
+        ),
+        default=None,
+    )
+    sp_inmail_content: Optional[SpInmailContent] = field(
+        metadata=config(
+            field_name="com.linkedin.voyager.messaging.event.message.spinmail.SpInmailContent"  # noqa: E501
         ),
         default=None,
     )
@@ -214,9 +256,10 @@ class MessageCustomContent:
 @dataclass_json(letter_case=LetterCase.CAMEL)
 @dataclass
 class MessageEvent:
-    attributed_body: AttributedBody
     body: str
     message_body_render_format: str
+    subject: Optional[str] = None
+    attributed_body: Optional[AttributedBody] = None
     attachments: List[MessageAttachment] = field(default_factory=list)
     custom_content: Optional[MessageCustomContent] = None
 
