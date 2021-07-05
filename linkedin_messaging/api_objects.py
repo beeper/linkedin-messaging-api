@@ -219,7 +219,7 @@ class SpInmailStandardSubContent:
 @dataclass_json(letter_case=LetterCase.CAMEL)
 @dataclass
 class SpInmailSubContent:
-    third_party_media: Optional[SpInmailStandardSubContent] = field(
+    standard: Optional[SpInmailStandardSubContent] = field(
         metadata=config(
             field_name="com.linkedin.voyager.messaging.event.message.spinmail.SpInmailStandardSubContent"  # noqa: E501
         ),
