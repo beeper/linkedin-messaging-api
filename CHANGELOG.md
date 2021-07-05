@@ -1,3 +1,7 @@
+# v0.1.6
+
+* Add support for parsing alternate names and images for InMail profiles
+
 # v0.1.5
 
 * Add support for parsing InMail messages
