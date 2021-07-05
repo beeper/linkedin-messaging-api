@@ -111,6 +111,8 @@ class MiniProfile:
 class MessagingMember:
     mini_profile: MiniProfile
     entity_urn: URN
+    alternate_name: Optional[str] = None
+    alternate_image: Optional[Picture] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
