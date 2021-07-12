@@ -40,6 +40,7 @@ async def main():
     mc = MessageCreate(AttributedBody(), attachments=[attachment])
     print(await linkedin.send_message(urn, mc))
 
+    await linkedin.logout()
     await linkedin.close()
 
 

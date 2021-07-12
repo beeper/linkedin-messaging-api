@@ -16,6 +16,7 @@ async def main():
 
     print(await linkedin.get_user_profile())
 
+    await linkedin.logout()
     await linkedin.close()
 
 

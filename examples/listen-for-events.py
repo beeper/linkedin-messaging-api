@@ -40,6 +40,7 @@ async def main():
 
     asyncio.gather(task)
 
+    await linkedin.logout()
     await linkedin.close()
 
 

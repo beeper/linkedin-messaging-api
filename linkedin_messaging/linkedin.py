@@ -56,11 +56,12 @@ REQUEST_HEADERS = {
 }
 
 # URL to seed all of the auth requests
-SEED_URL = "https://www.linkedin.com/uas/login"
-LOGIN_URL = "https://www.linkedin.com/checkpoint/lg/login-submit"
-VERIFY_URL = "https://www.linkedin.com/checkpoint/challenge/verify"
-REALTIME_CONNECT_URL = "https://realtime.www.linkedin.com/realtime/connect"
 HEARTBEAT_URL = "https://realtime.www.linkedin.com/realtime/realtimeFrontendClientConnectivityTracking"  # noqa: E501
+LOGIN_URL = "https://www.linkedin.com/checkpoint/lg/login-submit"
+LOGOUT_URL = "https://www.linkedin.com/uas/logout"
+REALTIME_CONNECT_URL = "https://realtime.www.linkedin.com/realtime/connect"
+SEED_URL = "https://www.linkedin.com/uas/login"
+VERIFY_URL = "https://www.linkedin.com/checkpoint/challenge/verify"
 
 LINKEDIN_BASE_URL = "https://www.linkedin.com"
 API_BASE_URL = f"{LINKEDIN_BASE_URL}/voyager/api"
@@ -195,6 +196,18 @@ class LinkedInMessaging:
                 return
             # TODO (#1) can we scrape anything from the page?
             raise Exception("Failed to log in.")
+
+    async def logout(self) -> bool:
+        csrf_token = None
+        for c in self.session.cookie_jar:
+            if c.key == "JSESSIONID":
+                csrf_token = c.value.strip('"')
+        response = await self.session.get(
+            LOGOUT_URL,
+            params={"csrfToken": csrf_token},
+            allow_redirects=False,
+        )
+        return response.status == 303
 
     # endregion
 

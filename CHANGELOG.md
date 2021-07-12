@@ -1,3 +1,7 @@
+# v0.2.0
+
+* Implemented logout endpoint.
+
 # v0.1.7
 
 * Fix typo in InMail parsing.
