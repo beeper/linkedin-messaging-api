@@ -40,6 +40,4 @@ async def main():
 
 
 loop = asyncio.get_event_loop()
-asyncio.ensure_future(main())
-loop.run_forever()
-loop.close()
+loop.run_until_complete(main())

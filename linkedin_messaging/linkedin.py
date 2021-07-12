@@ -110,11 +110,7 @@ class LinkedInMessaging:
     @property
     def has_auth_cookies(self) -> bool:
         cookie_names = {c.key for c in self.session.cookie_jar}
-        return (
-            "liap" in cookie_names
-            and "li_at" in cookie_names
-            and "JSESSIONID" in cookie_names
-        )
+        return "li_at" in cookie_names and "JSESSIONID" in cookie_names
 
     async def logged_in(self) -> bool:
         if not self.has_auth_cookies:
@@ -198,10 +194,9 @@ class LinkedInMessaging:
             raise Exception("Failed to log in.")
 
     async def logout(self) -> bool:
-        csrf_token = None
-        for c in self.session.cookie_jar:
-            if c.key == "JSESSIONID":
-                csrf_token = c.value.strip('"')
+        csrf_token = self.session.headers.get("csrf-token")
+        if not csrf_token:
+            return True
         response = await self.session.get(
             LOGOUT_URL,
             params={"csrfToken": csrf_token},

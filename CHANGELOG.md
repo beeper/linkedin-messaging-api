@@ -1,3 +1,7 @@
+# v0.2.1
+
+* Removed `liap` cookie as required for being authenticated.
+
 # v0.2.0
 
 * Implemented logout endpoint.
