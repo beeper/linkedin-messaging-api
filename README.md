@@ -13,5 +13,8 @@ See [`examples` directory](./examples).
 
 ## Credits
 
+Inspired by [linkedin-api](https://github.com/tomquirk/linkedin-api).
+
 Authentication technique from [@everping](https://github.com/everping) in the
-[Linkedin-Authentication-Challenge](https://github.com/everping/Linkedin-Authentication-Challenge). Used with permission.
+[Linkedin-Authentication-Challenge](https://github.com/everping/Linkedin-Authentication-Challenge)
+repo. Used with permission.
