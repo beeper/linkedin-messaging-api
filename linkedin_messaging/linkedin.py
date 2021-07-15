@@ -9,6 +9,7 @@ from typing import (
     AsyncGenerator,
     Awaitable,
     Callable,
+    cast,
     DefaultDict,
     Dict,
     List,
@@ -19,6 +20,7 @@ from typing import (
 
 import aiohttp
 from bs4 import BeautifulSoup
+from dataclasses_json.api import DataClassJsonMixin
 
 from .api_objects import (
     Conversation,
@@ -69,7 +71,7 @@ VERIFY_URL = "https://www.linkedin.com/checkpoint/challenge/verify"
 LINKEDIN_BASE_URL = "https://www.linkedin.com"
 API_BASE_URL = f"{LINKEDIN_BASE_URL}/voyager/api"
 
-T = TypeVar("T")
+T = TypeVar("T", bound=DataClassJsonMixin)
 
 
 async def try_from_json(deserialise_to: T, response: aiohttp.ClientResponse) -> T:
@@ -259,7 +261,9 @@ class LinkedInMessaging:
         }
 
         res = await self._get("/messaging/conversations", params=params)
-        return await try_from_json(ConversationsResponse, res)
+        return cast(
+            ConversationsResponse, await try_from_json(ConversationsResponse, res)
+        )
 
     async def get_all_conversations(self) -> AsyncGenerator[Conversation, None]:
         """
@@ -305,7 +309,9 @@ class LinkedInMessaging:
             f"/messaging/conversations/{conversation_urn.id_parts[0]}/events",
             params=params,
         )
-        return await try_from_json(ConversationResponse, res)
+        return cast(
+            ConversationResponse, await try_from_json(ConversationResponse, res)
+        )
 
     # endregion
 
@@ -383,7 +389,7 @@ class LinkedInMessaging:
                 headers=REQUEST_HEADERS,
             )
 
-        return await try_from_json(SendMessageResponse, res)
+        return cast(SendMessageResponse, await try_from_json(SendMessageResponse, res))
 
     async def delete_message(self, conversation_urn: URN, message_urn: URN) -> bool:
         res = await self._post(
@@ -444,14 +450,15 @@ class LinkedInMessaging:
             "q": "messageAndEmoji",
         }
         res = await self._get("/voyagerMessagingDashReactors", params=params)
-        return await try_from_json(ReactorsResponse, res)
+        return cast(ReactorsResponse, await try_from_json(ReactorsResponse, res))
 
     # endregion
 
     # region Profiles
 
     async def get_user_profile(self) -> UserProfileResponse:
-        return await try_from_json(UserProfileResponse, await self._get("/me"))
+        res = await self._get("/me")
+        return cast(UserProfileResponse, await try_from_json(UserProfileResponse, res))
 
     async def download_profile_picture(self, picture: Picture) -> bytes:
         url = (
