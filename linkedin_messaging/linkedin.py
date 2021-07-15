@@ -277,6 +277,10 @@ class LinkedInMessaging:
         )
         return ConversationResponse.from_json(await conversations_resp.text())
 
+    # endregion
+
+    # region Messages
+
     async def upload_media(
         self,
         data: bytes,
@@ -346,9 +350,19 @@ class LinkedInMessaging:
                 f"/messaging/conversations/{conversation_id}/events",
                 params=params,
                 json=message_event,
+                headers=REQUEST_HEADERS,
             )
 
         return SendMessageResponse.from_json(await res.text())
+
+    async def delete_message(self, conversation_urn: URN, message_urn: URN) -> bool:
+        res = await self._post(
+            "/messaging/conversations/{}/events/{}".format(
+                conversation_urn, message_urn.id_parts[-1]
+            ),
+            params={"action": "recall"},
+        )
+        return res.status == 204
 
     async def download_linkedin_media(self, url: str) -> bytes:
         async with self.session.get(url) as media_resp:
