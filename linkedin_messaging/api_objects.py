@@ -261,6 +261,7 @@ class MessageEvent:
     body: str
     message_body_render_format: str
     subject: Optional[str] = None
+    recalled_at: Optional[datetime] = None
     attributed_body: Optional[AttributedBody] = None
     attachments: List[MessageAttachment] = field(default_factory=list)
     custom_content: Optional[MessageCustomContent] = None
