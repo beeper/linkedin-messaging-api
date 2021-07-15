@@ -1,3 +1,11 @@
+# v0.3.0
+
+* Add support for deleting messages.
+* Added support for the `recalled_at` property on `MessageEvent`s.
+* Add support for adding and removing reactions.
+* Add support for getting the reactors of a message and emoji.
+* Improved error handling when there is a JSON decode error.
+
 # v0.2.1
 
 * Removed `liap` cookie as required for being authenticated.
