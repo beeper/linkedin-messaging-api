@@ -27,11 +27,22 @@ async def main():
             cf.write(linkedin.to_pickle())
 
     async def on_event(event: RealTimeEventStreamEvent):
+        print("MESSAGE")
+        if event.event:
+            print("REDACTION?", event.event.event_content.message_event.recalled_at)
         print(event)
 
+    async def on_reaction(event: RealTimeEventStreamEvent):
+        print("REACTION")
+        print(event)
+        assert event.event_urn
+        assert event.reaction_summary
+        print(
+            await linkedin.get_reactors(event.event_urn, event.reaction_summary.emoji)
+        )
+
     linkedin.add_event_listener("event", on_event)
-    linkedin.add_event_listener("reactionSummary", on_event)
-    linkedin.add_event_listener("reactionAdded", on_event)
+    linkedin.add_event_listener("reactionSummary", on_reaction)
 
     task = asyncio.create_task(linkedin.start_listener())
 

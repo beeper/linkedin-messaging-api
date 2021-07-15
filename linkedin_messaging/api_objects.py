@@ -382,4 +382,25 @@ class RealTimeEventStreamEvent(DataClassJsonMixin):
     actor_mini_profile_urn: Optional[URN] = None
     event_urn: Optional[URN] = None
     reaction_summary: Optional[ReactionSummary] = None
-    viewer_reacted: Optional[bool] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class ReactorProfile:
+    first_name: str
+    last_name: str
+    entity_urn: URN
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class Reactor:
+    reactor_urn: URN
+    reactor: ReactorProfile
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class ReactorsResponse(DataClassJsonMixin):
+    elements: List[Reactor]
+    paging: Paging

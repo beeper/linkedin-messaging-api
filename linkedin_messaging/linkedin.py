@@ -26,6 +26,7 @@ from .api_objects import (
     MessageAttachmentCreate,
     MessageCreate,
     Picture,
+    ReactorsResponse,
     RealTimeEventStreamEvent,
     SendMessageResponse,
     URN,
@@ -406,6 +407,16 @@ class LinkedInMessaging:
         )
         return res.status == 204
 
+    async def get_reactors(self, message_urn: URN, emoji: str) -> ReactorsResponse:
+        params = {
+            "decorationId": "com.linkedin.voyager.dash.deco.messaging.FullReactor-8",
+            "emoji": emoji,
+            "messageUrn": f"urn:li:fsd_message:{message_urn.id_parts[-1]}",
+            "q": "messageAndEmoji",
+        }
+        res = await self._get("/voyagerMessagingDashReactors", params=params)
+        return ReactorsResponse.from_json(await res.text())
+
     # endregion
 
     # region Profiles
@@ -465,7 +476,7 @@ class LinkedInMessaging:
                 ).get("payload", {})
 
                 for key in self.event_listeners.keys():
-                    if event_payload.get(key):
+                    if event_payload.get(key) is not None:
                         await self._fire(
                             key, RealTimeEventStreamEvent.from_dict(event_payload)
                         )
