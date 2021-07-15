@@ -25,18 +25,20 @@ async def main():
         with open(cookie_path, "wb+") as cf:
             cf.write(linkedin.to_pickle())
 
-    # Get a list of all of the conversations for the given user.
-    conversations = await linkedin.get_conversations()
-    for c in conversations.elements:
-        print(c)
+    try:
 
-    # Get a specific conversation by URN.
-    convo_resp = await linkedin.get_conversation(urn)
-    for element in convo_resp.elements:
-        print(element)
+        # Get a list of all of the conversations for the given user.
+        conversations = await linkedin.get_conversations()
+        for c in conversations.elements:
+            print(c)
 
-    await linkedin.logout()
-    await linkedin.close()
+        # Get a specific conversation by URN.
+        convo_resp = await linkedin.get_conversation(urn)
+        for element in convo_resp.elements:
+            print(element)
+
+    finally:
+        await linkedin.close()
 
 
 loop = asyncio.get_event_loop()

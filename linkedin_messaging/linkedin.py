@@ -13,6 +13,7 @@ from typing import (
     Dict,
     List,
     Optional,
+    TypeVar,
     Union,
 )
 
@@ -23,6 +24,7 @@ from .api_objects import (
     Conversation,
     ConversationResponse,
     ConversationsResponse,
+    Error,
     MessageAttachmentCreate,
     MessageCreate,
     Picture,
@@ -66,6 +68,33 @@ VERIFY_URL = "https://www.linkedin.com/checkpoint/challenge/verify"
 
 LINKEDIN_BASE_URL = "https://www.linkedin.com"
 API_BASE_URL = f"{LINKEDIN_BASE_URL}/voyager/api"
+
+T = TypeVar("T")
+
+
+async def try_from_json(deserialise_to: T, response: aiohttp.ClientResponse) -> T:
+    if response.status < 200 or 300 <= response.status:
+        try:
+            error = Error.from_json(await response.text())
+        except:
+            raise Exception(
+                f"Deserialising to {deserialise_to} failed because response "
+                f"was {response.status}. Details: {await response.text()}"
+            )
+        raise error
+
+    text = await response.text()
+    try:
+        return deserialise_to.from_json(text)
+    except (json.JSONDecodeError, ValueError) as e:
+        try:
+            error = Error.from_json(text)
+        except:
+            raise Exception(
+                f"Deserialising to {deserialise_to} failed. Error: {e}. "
+                f"Response: {text}."
+            )
+        raise error
 
 
 class ChallengeException(Exception):
@@ -229,8 +258,8 @@ class LinkedInMessaging:
             "createdBefore": int(last_activity_before.timestamp() * 1000),
         }
 
-        conversations_resp = await self._get("/messaging/conversations", params=params)
-        return ConversationsResponse.from_json(await conversations_resp.text())
+        res = await self._get("/messaging/conversations", params=params)
+        return await try_from_json(ConversationsResponse, res)
 
     async def get_all_conversations(self) -> AsyncGenerator[Conversation, None]:
         """
@@ -272,11 +301,11 @@ class LinkedInMessaging:
             "createdBefore": int(created_before.timestamp() * 1000),
         }
 
-        conversations_resp = await self._get(
+        res = await self._get(
             f"/messaging/conversations/{conversation_urn.id_parts[0]}/events",
             params=params,
         )
-        return ConversationResponse.from_json(await conversations_resp.text())
+        return await try_from_json(ConversationResponse, res)
 
     # endregion
 
@@ -354,7 +383,7 @@ class LinkedInMessaging:
                 headers=REQUEST_HEADERS,
             )
 
-        return SendMessageResponse.from_json(await res.text())
+        return await try_from_json(SendMessageResponse, res)
 
     async def delete_message(self, conversation_urn: URN, message_urn: URN) -> bool:
         res = await self._post(
@@ -415,15 +444,14 @@ class LinkedInMessaging:
             "q": "messageAndEmoji",
         }
         res = await self._get("/voyagerMessagingDashReactors", params=params)
-        return ReactorsResponse.from_json(await res.text())
+        return await try_from_json(ReactorsResponse, res)
 
     # endregion
 
     # region Profiles
 
     async def get_user_profile(self) -> UserProfileResponse:
-        response = await self._get("/me")
-        return UserProfileResponse.from_json(await response.text())
+        return await try_from_json(UserProfileResponse, await self._get("/me"))
 
     async def download_profile_picture(self, picture: Picture) -> bytes:
         url = (

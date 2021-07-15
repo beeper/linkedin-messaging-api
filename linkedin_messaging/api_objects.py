@@ -404,3 +404,9 @@ class Reactor:
 class ReactorsResponse(DataClassJsonMixin):
     elements: List[Reactor]
     paging: Paging
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass
+class Error(DataClassJsonMixin, Exception):
+    status: int
