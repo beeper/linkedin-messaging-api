@@ -374,6 +374,40 @@ class LinkedInMessaging:
 
     # endregion
 
+    # region Reactions
+
+    async def add_emoji_reaction(
+        self,
+        conversation_urn: URN,
+        message_urn: URN,
+        emoji: str,
+    ) -> bool:
+        res = await self._post(
+            "/messaging/conversations/{}/events/{}".format(
+                conversation_urn, message_urn.id_parts[-1]
+            ),
+            params={"action": "reactWithEmoji"},
+            json={"emoji": emoji},
+        )
+        return res.status == 204
+
+    async def remove_emoji_reaction(
+        self,
+        conversation_urn: URN,
+        message_urn: URN,
+        emoji: str,
+    ) -> bool:
+        res = await self._post(
+            "/messaging/conversations/{}/events/{}".format(
+                conversation_urn, message_urn.id_parts[-1]
+            ),
+            params={"action": "unreactWithEmoji"},
+            json={"emoji": emoji},
+        )
+        return res.status == 204
+
+    # endregion
+
     # region Profiles
 
     async def get_user_profile(self) -> UserProfileResponse:
