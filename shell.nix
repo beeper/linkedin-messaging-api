@@ -6,7 +6,7 @@ pkgs.mkShell {
 
   propagatedBuildInputs = with python3Packages; [
     poetry
-    python38
+    python39
   ];
 
   shellHook = ''
