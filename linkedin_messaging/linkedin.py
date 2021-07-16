@@ -10,9 +10,6 @@ from typing import (
     Awaitable,
     Callable,
     cast,
-    DefaultDict,
-    Dict,
-    List,
     Optional,
     TypeVar,
     Union,
@@ -105,9 +102,9 @@ class ChallengeException(Exception):
 
 class LinkedInMessaging:
     session: aiohttp.ClientSession
-    two_factor_payload: Dict[str, Any]
-    event_listeners: DefaultDict[
-        str, List[Callable[[RealTimeEventStreamEvent], Awaitable[None]]]
+    two_factor_payload: dict[str, Any]
+    event_listeners: defaultdict[
+        str, list[Callable[[RealTimeEventStreamEvent], Awaitable[None]]]
     ]
 
     def __init__(self):
@@ -282,7 +279,10 @@ class LinkedInMessaging:
             if len(conversations_response.elements) < 20:
                 break
 
-            last_activity_before = conversations_response.elements[-1].last_activity_at
+            if last_activity_at := conversations_response.elements[-1].last_activity_at:
+                last_activity_before = last_activity_at
+            else:
+                break
 
     async def get_conversation(
         self,
@@ -356,13 +356,13 @@ class LinkedInMessaging:
 
     async def send_message(
         self,
-        conversation_urn_or_recipients: Union[URN, List[URN]],
+        conversation_urn_or_recipients: Union[URN, list[URN]],
         message_create: MessageCreate,
     ) -> SendMessageResponse:
         params = {"action": "create"}
         message_create_key = "com.linkedin.voyager.messaging.create.MessageCreate"
 
-        message_event: Dict[str, Any] = {
+        message_event: dict[str, Any] = {
             "eventCreate": {"value": {message_create_key: message_create.to_dict()}}
         }
 
@@ -461,6 +461,10 @@ class LinkedInMessaging:
         return cast(UserProfileResponse, await try_from_json(UserProfileResponse, res))
 
     async def download_profile_picture(self, picture: Picture) -> bytes:
+        if not picture.vector_image:
+            raise Exception(
+                "Failed downloading media. Invalid Picture object with no vector_image."
+            )
         url = (
             picture.vector_image.root_url
             + picture.vector_image.artifacts[-1].file_identifying_url_path_segment

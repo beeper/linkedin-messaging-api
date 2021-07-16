@@ -1,6 +1,6 @@
 from datetime import datetime
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Optional
 
 import dataclasses_json
 from dataclasses_json import (
@@ -52,7 +52,7 @@ decoder_functions = {
     datetime: (lambda s: datetime.fromtimestamp(int(s) / 1000) if s else None),
     URN: (lambda s: URN(s) if s else None),
 }
-encoder_functions: Dict[Any, Callable[[Any], Any]] = {
+encoder_functions: dict[Any, Callable[[Any], Any]] = {
     datetime: (lambda d: int(d.timestamp() * 1000) if d else None),
     URN: (lambda u: str(u) if u else None),
 }
@@ -73,32 +73,33 @@ for type_, translation_function in encoder_functions.items():
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class Artifact:
-    width: int
-    height: int
-    file_identifying_url_path_segment: str
-    expires_at: datetime
+    height: int = -1
+    width: int = -1
+    file_identifying_url_path_segment: str = ""
+    expires_at: Optional[datetime] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class VectorImage:
-    artifacts: List[Artifact]
-    root_url: str
+    artifacts: list[Artifact] = field(default_factory=list)
+    root_url: str = ""
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class Picture:
-    vector_image: VectorImage = field(
-        metadata=config(field_name="com.linkedin.common.VectorImage")
+    vector_image: Optional[VectorImage] = field(
+        metadata=config(field_name="com.linkedin.common.VectorImage"),
+        default=None,
     )
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class MiniProfile:
-    entity_urn: URN
-    public_identifier: str
+    entity_urn: Optional[URN] = None
+    public_identifier: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     occupation: Optional[str] = None
@@ -109,8 +110,8 @@ class MiniProfile:
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class MessagingMember:
-    mini_profile: MiniProfile
-    entity_urn: URN
+    entity_urn: Optional[URN] = None
+    mini_profile: Optional[MiniProfile] = None
     alternate_name: Optional[str] = None
     alternate_image: Optional[Picture] = None
 
@@ -118,105 +119,107 @@ class MessagingMember:
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class Paging:
-    count: int
-    start: int
-    links: List[Any]
+    count: int = 0
+    start: int = 0
+    links: list[Any] = field(default_factory=list)
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class TextEntity:
-    urn: URN
+    urn: Optional[URN] = None
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class AttributeType:
-    text_entity: TextEntity = field(
-        metadata=config(field_name="com.linkedin.pemberly.text.Entity")
+    text_entity: Optional[TextEntity] = field(
+        metadata=config(field_name="com.linkedin.pemberly.text.Entity"), default=None
     )
 
 
 @dataclass_json
 @dataclass
 class Attribute:
-    start: int
-    length: int
-    type_: AttributeType = field(metadata=config(field_name="type"))
+    start: int = 0
+    length: int = 0
+    type_: Optional[AttributeType] = field(
+        metadata=config(field_name="type"), default=None
+    )
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class AttributedBody:
     text: str = ""
-    attributes: List[Attribute] = field(default_factory=list)
+    attributes: list[Attribute] = field(default_factory=list)
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class MessageAttachmentCreate:
-    byte_size: int
-    id_: URN = field(metadata=config(field_name="id"))
-    media_type: str
-    name: str
+    byte_size: int = 0
+    id_: Optional[URN] = field(metadata=config(field_name="id"), default=None)
+    media_type: str = ""
+    name: str = ""
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class MessageAttachmentReference:
-    string: str
+    string: str = ""
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class MessageAttachment:
-    byte_size: int
-    id_: URN = field(metadata=config(field_name="id"))
-    media_type: str
-    name: str
-    reference: MessageAttachmentReference
+    id_: Optional[URN] = field(metadata=config(field_name="id"), default=None)
+    byte_size: int = 0
+    media_type: str = ""
+    name: str = ""
+    reference: Optional[MessageAttachmentReference] = None
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class GifInfo:
-    original_height: int
-    original_width: int
-    url: str
+    original_height: int = 0
+    original_width: int = 0
+    url: str = ""
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class ThirdPartyMediaInfo:
-    previewgif: GifInfo
-    nanogif: GifInfo
-    gif: GifInfo
+    previewgif: Optional[GifInfo] = None
+    nanogif: Optional[GifInfo] = None
+    gif: Optional[GifInfo] = None
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class ThirdPartyMedia:
-    media_type: str
-    id_: str = field(metadata=config(field_name="id"))
-    media: ThirdPartyMediaInfo
-    title: str
+    media_type: str = ""
+    id_: str = field(metadata=config(field_name="id"), default="")
+    media: Optional[ThirdPartyMediaInfo] = None
+    title: str = ""
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class LegalText:
-    static_legal_text: str
-    custom_legal_text: str
+    static_legal_text: str = ""
+    custom_legal_text: str = ""
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class SpInmailStandardSubContent:
-    action: str
-    action_text: str
+    action: str = ""
+    action_text: str = ""
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class SpInmailSubContent:
     standard: Optional[SpInmailStandardSubContent] = field(
@@ -227,18 +230,18 @@ class SpInmailSubContent:
     )
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class SpInmailContent:
-    status: str
-    sp_inmail_type: str
-    advertiser_label: str
-    body: str
+    status: str = ""
+    sp_inmail_type: str = ""
+    advertiser_label: str = ""
+    body: str = ""
     legal_text: Optional[LegalText] = None
     sub_content: Optional[SpInmailSubContent] = None
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class MessageCustomContent:
     third_party_media: Optional[ThirdPartyMedia] = field(
@@ -255,122 +258,125 @@ class MessageCustomContent:
     )
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class MessageEvent:
-    body: str
-    message_body_render_format: str
+    body: str = ""
+    message_body_render_format: str = ""
     subject: Optional[str] = None
     recalled_at: Optional[datetime] = None
     attributed_body: Optional[AttributedBody] = None
-    attachments: List[MessageAttachment] = field(default_factory=list)
+    attachments: list[MessageAttachment] = field(default_factory=list)
     custom_content: Optional[MessageCustomContent] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class EventContent:
-    message_event: MessageEvent = field(
-        metadata=config(field_name="com.linkedin.voyager.messaging.event.MessageEvent")
+    message_event: Optional[MessageEvent] = field(
+        metadata=config(field_name="com.linkedin.voyager.messaging.event.MessageEvent"),
+        default=None,
     )
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class From:
-    messaging_member: MessagingMember = field(
-        metadata=config(field_name="com.linkedin.voyager.messaging.MessagingMember")
+    messaging_member: Optional[MessagingMember] = field(
+        metadata=config(field_name="com.linkedin.voyager.messaging.MessagingMember"),
+        default=None,
     )
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class ReactionSummary:
-    count: int
-    first_reacted_at: datetime
-    emoji: str
-    viewer_reacted: bool
+    count: int = 0
+    first_reacted_at: Optional[datetime] = None
+    emoji: str = ""
+    viewer_reacted: bool = False
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class ConversationEvent:
-    created_at: datetime
-    entity_urn: URN
-    event_content: EventContent
-    subtype: str
-    from_: From = field(metadata=config(field_name="from"))
+    created_at: Optional[datetime] = None
+    entity_urn: Optional[URN] = None
+    event_content: Optional[EventContent] = None
+    subtype: str = ""
+    from_: Optional[From] = field(metadata=config(field_name="from"), default=None)
     previous_event_in_conversation: Optional[URN] = None
-    reaction_summaries: List[ReactionSummary] = field(default_factory=list)
+    reaction_summaries: list[ReactionSummary] = field(default_factory=list)
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class Participant:
-    messaging_member: MessagingMember = field(
-        metadata=config(field_name="com.linkedin.voyager.messaging.MessagingMember")
+    messaging_member: Optional[MessagingMember] = field(
+        metadata=config(field_name="com.linkedin.voyager.messaging.MessagingMember"),
+        default=None,
     )
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class Conversation:
-    group_chat: bool
-    total_event_count: int
-    unread_count: int
-    last_activity_at: datetime
-    entity_urn: URN
-    muted: bool
-    events: List[ConversationEvent]
-    participants: List[Participant]
+    group_chat: bool = False
+    total_event_count: int = 0
+    unread_count: int = 0
+    last_activity_at: Optional[datetime] = None
+    entity_urn: Optional[URN] = None
+    muted: bool = False
+    events: list[ConversationEvent] = field(default_factory=list)
+    participants: list[Participant] = field(default_factory=list)
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class ConversationsResponse(DataClassJsonMixin):
-    elements: List[Conversation]
-    paging: Paging
+    elements: list[Conversation] = field(default_factory=list)
+    paging: Optional[Paging] = None
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class ConversationResponse(DataClassJsonMixin):
-    elements: List[ConversationEvent]
-    paging: Paging
+    elements: list[ConversationEvent] = field(default_factory=list)
+    paging: Optional[Paging] = None
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class MessageCreate(DataClassJsonMixin):
-    attributed_body: AttributedBody
+    attributed_body: Optional[AttributedBody] = None
     body: str = ""
-    attachments: List[MessageAttachmentCreate] = field(default_factory=list)
+    attachments: list[MessageAttachmentCreate] = field(default_factory=list)
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class MessageCreatedInfo:
-    created_at: datetime
-    event_urn: URN
-    backend_event_urn: URN
-    conversation_urn: URN
-    backend_conversation_urn: URN
+    created_at: Optional[datetime] = None
+    event_urn: Optional[URN] = None
+    backend_event_urn: Optional[URN] = None
+    conversation_urn: Optional[URN] = None
+    backend_conversation_urn: Optional[URN] = None
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class SendMessageResponse(DataClassJsonMixin):
-    value: MessageCreatedInfo
+    value: Optional[MessageCreatedInfo] = None
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class UserProfileResponse(DataClassJsonMixin):
-    plain_id: str
-    mini_profile: MiniProfile
+    plain_id: str = ""
+    mini_profile: Optional[MiniProfile] = None
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class RealTimeEventStreamEvent(DataClassJsonMixin):
     # Message real-time events
@@ -384,29 +390,29 @@ class RealTimeEventStreamEvent(DataClassJsonMixin):
     reaction_summary: Optional[ReactionSummary] = None
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class ReactorProfile:
-    first_name: str
-    last_name: str
-    entity_urn: URN
+    first_name: str = ""
+    last_name: str = ""
+    entity_urn: Optional[URN] = None
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class Reactor:
-    reactor_urn: URN
-    reactor: ReactorProfile
+    reactor_urn: Optional[URN] = None
+    reactor: Optional[ReactorProfile] = None
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class ReactorsResponse(DataClassJsonMixin):
-    elements: List[Reactor]
-    paging: Paging
+    elements: list[Reactor] = field(default_factory=list)
+    paging: Optional[Paging] = None
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class Error(DataClassJsonMixin, Exception):
-    status: int
+    status: int = -1

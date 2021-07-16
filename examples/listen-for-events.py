@@ -28,8 +28,8 @@ async def main():
 
     async def on_event(event: RealTimeEventStreamEvent):
         print("MESSAGE")
-        if event.event:
-            print("REDACTION?", event.event.event_content.message_event.recalled_at)
+        if (e := event.event) and (ec := e.event_content) and (me := ec.message_event):
+            print("REDACTION?", me.recalled_at)
         print(event)
 
     async def on_reaction(event: RealTimeEventStreamEvent):
