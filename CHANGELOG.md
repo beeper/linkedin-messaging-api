@@ -1,3 +1,8 @@
+# v0.4.0
+
+* Dropped support for everything except for Python 3.9+.
+* Made all API fields optional.
+
 # v0.3.0
 
 * Add support for deleting messages.
