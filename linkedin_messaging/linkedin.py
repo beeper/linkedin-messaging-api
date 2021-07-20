@@ -320,6 +320,13 @@ class LinkedInMessaging:
             ConversationResponse, await try_from_json(ConversationResponse, res)
         )
 
+    async def mark_conversation_as_read(self, conversation_urn: URN) -> bool:
+        res = await self._post(
+            f"/messaging/conversations/{conversation_urn.id_parts[-1]}",
+            json={"patch": {"$set": {"read": True}}},
+        )
+        return res.status == 200
+
     # endregion
 
     # region Messages
