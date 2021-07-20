@@ -104,7 +104,14 @@ class LinkedInMessaging:
     session: aiohttp.ClientSession
     two_factor_payload: dict[str, Any]
     event_listeners: defaultdict[
-        str, list[Callable[[RealTimeEventStreamEvent], Awaitable[None]]]
+        str,
+        list[
+            Union[
+                Callable[[RealTimeEventStreamEvent], Awaitable[None]],
+                Callable[[asyncio.exceptions.TimeoutError], Awaitable[None]],
+                Callable[[Exception], Awaitable[None]],
+            ]
+        ],
     ]
 
     def __init__(self):
@@ -483,8 +490,20 @@ class LinkedInMessaging:
     def add_event_listener(
         self,
         payload_key: str,
-        fn: Callable[[RealTimeEventStreamEvent], Awaitable[None]],
+        fn: Union[
+            Callable[[RealTimeEventStreamEvent], Awaitable[None]],
+            Callable[[asyncio.exceptions.TimeoutError], Awaitable[None]],
+            Callable[[Exception], Awaitable[None]],
+        ],
     ):
+        """
+        There are three special event types:
+
+        * ALL_EVENTS - an event fired on every event, and which contains the entirety of
+            the raw event payload
+        * TIMEOUT - an event fired if the event listener connection times out
+        * STREAM_ERROR - an event fired if the event stream errors for any other reason
+        """
         self.event_listeners[payload_key].append(fn)
 
     async def _fire(self, payload_key: str, event: Any):
@@ -510,6 +529,11 @@ class LinkedInMessaging:
                     continue
                 data = json.loads(line.decode("utf-8")[6:])
 
+                # Special handling for ALL_EVENTS handler.
+                if all_events_handlers := self.event_listeners.get("ALL_EVENTS"):
+                    for handler in all_events_handlers:
+                        await handler(data)
+
                 event_payload = data.get(
                     "com.linkedin.realtimefrontend.DecoratedEvent", {}
                 ).get("payload", {})
@@ -526,10 +550,20 @@ class LinkedInMessaging:
         while True:
             try:
                 await self._listen_to_event_stream()
-            except asyncio.exceptions.TimeoutError:
+            except asyncio.exceptions.TimeoutError as te:
+                # Special handling for TIMEOUT handler.
+                if all_events_handlers := self.event_listeners.get("TIMEOUT"):
+                    for handler in all_events_handlers:
+                        await handler(te)
+                await asyncio.sleep(1)
                 continue
             except Exception as e:
                 logging.exception(f"Error listening to event stream: {e}")
+                # Special handling for STREAM_ERROR handler.
+                if all_events_handlers := self.event_listeners.get("STREAM_ERROR"):
+                    for handler in all_events_handlers:
+                        await handler(e)
+                await asyncio.sleep(1)
                 continue
 
     # endregion
