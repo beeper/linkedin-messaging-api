@@ -1,3 +1,8 @@
+# v0.4.1
+
+* Added special events for monitoring listener connection status.
+* Added the ability to mark a conversation as read.
+
 # v0.4.0
 
 * Dropped support for everything except for Python 3.9+.
