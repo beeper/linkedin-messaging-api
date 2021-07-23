@@ -1,4 +1,4 @@
-# v0.4.2rc2
+# v0.4.2
 
 * Explicitly specify the timeout of each event stream connection to help avoid
   weird states where the event stream is open but not receiving events.
