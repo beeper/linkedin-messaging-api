@@ -523,6 +523,10 @@ class LinkedInMessaging:
         async with self.session.get(
             REALTIME_CONNECT_URL,
             headers={"content-type": "text/event-stream", **REQUEST_HEADERS},
+            # The event stream normally stays open for about 3 minutes, but this will
+            # automatically close it more agressively so that we don't get into a weird
+            # state where it's not receiving any data, but simultaneously isn't closed.
+            timeout=120,
         ) as resp:
             if resp.status != 200:
                 raise Exception(f"Failed to connect. Status {resp.status}.")
