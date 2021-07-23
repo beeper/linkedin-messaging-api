@@ -1,3 +1,8 @@
+# v0.4.2rc1
+
+* Explicitly specify the timeout of each event stream connection to help avoid
+  weird states where the event stream is open but not receiving events.
+
 # v0.4.1
 
 * Added special events for monitoring listener connection status.
