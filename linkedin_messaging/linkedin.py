@@ -515,7 +515,10 @@ class LinkedInMessaging:
 
     async def _fire(self, payload_key: str, event: Any):
         for listener in self.event_listeners[payload_key]:
-            await listener(event)
+            try:
+                await listener(event)
+            except Exception:
+                logging.exception(f"Listener {listener} failed to handle {event}")
 
     async def _listen_to_event_stream(self):
         logging.info("Starting event stream listener")
@@ -543,7 +546,12 @@ class LinkedInMessaging:
                 # Special handling for ALL_EVENTS handler.
                 if all_events_handlers := self.event_listeners.get("ALL_EVENTS"):
                     for handler in all_events_handlers:
-                        await handler(data)
+                        try:
+                            await handler(data)
+                        except Exception:
+                            logging.exception(
+                                f"Handler {handler} failed to handle {data}"
+                            )
 
                 event_payload = data.get(
                     "com.linkedin.realtimefrontend.DecoratedEvent", {}
@@ -565,16 +573,20 @@ class LinkedInMessaging:
                 # Special handling for TIMEOUT handler.
                 if all_events_handlers := self.event_listeners.get("TIMEOUT"):
                     for handler in all_events_handlers:
-                        await handler(te)
-                await asyncio.sleep(1)
-                continue
+                        try:
+                            await handler(te)
+                        except Exception:
+                            logging.exception(
+                                f"Handler {handler} failed to handle {te}"
+                            )
             except Exception as e:
                 logging.exception(f"Error listening to event stream: {e}")
                 # Special handling for STREAM_ERROR handler.
                 if all_events_handlers := self.event_listeners.get("STREAM_ERROR"):
                     for handler in all_events_handlers:
-                        await handler(e)
-                await asyncio.sleep(1)
-                continue
+                        try:
+                            await handler(e)
+                        except Exception:
+                            logging.exception(f"Handler {handler} failed to handle {e}")
 
     # endregion

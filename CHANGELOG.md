@@ -1,7 +1,8 @@
-# v0.4.2rc1
+# v0.4.2rc2
 
 * Explicitly specify the timeout of each event stream connection to help avoid
   weird states where the event stream is open but not receiving events.
+* Add more logging and error handling when event listener handlers fail.
 
 # v0.4.1
 
