@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "linkedin_messaging"
-version = "0.4.2"
+version = "0.4.3"
 description = "An unofficial API for interacting with LinkedIn Messaging"
 authors = ["Sumner Evans <inquiries@sumnerevans.com>"]
 license = "Apache-2.0"

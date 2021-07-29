@@ -1,3 +1,8 @@
+# v0.4.3
+
+* Add conversation name field to `Conversation` and name update custom content
+  to `MessageCustomContent`.
+
 # v0.4.2
 
 * Explicitly specify the timeout of each event stream connection to help avoid

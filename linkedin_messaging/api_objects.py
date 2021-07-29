@@ -243,16 +243,28 @@ class SpInmailContent:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class ConversationNameUpdateContent:
+    new_name: str = ""
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class MessageCustomContent:
-    third_party_media: Optional[ThirdPartyMedia] = field(
+    conversation_name_update_content: Optional[ConversationNameUpdateContent] = field(
         metadata=config(
-            field_name="com.linkedin.voyager.messaging.shared.ThirdPartyMedia"
+            field_name="com.linkedin.voyager.messaging.event.message.ConversationNameUpdateContent"  # noqa: E501
         ),
         default=None,
     )
     sp_inmail_content: Optional[SpInmailContent] = field(
         metadata=config(
             field_name="com.linkedin.voyager.messaging.event.message.spinmail.SpInmailContent"  # noqa: E501
+        ),
+        default=None,
+    )
+    third_party_media: Optional[ThirdPartyMedia] = field(
+        metadata=config(
+            field_name="com.linkedin.voyager.messaging.shared.ThirdPartyMedia"
         ),
         default=None,
     )
@@ -326,6 +338,7 @@ class Conversation:
     unread_count: int = 0
     last_activity_at: Optional[datetime] = None
     entity_urn: Optional[URN] = None
+    name: str = ""
     muted: bool = False
     events: list[ConversationEvent] = field(default_factory=list)
     participants: list[Participant] = field(default_factory=list)
