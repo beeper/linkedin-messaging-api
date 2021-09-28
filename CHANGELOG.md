@@ -1,3 +1,7 @@
+# v0.5.0
+
+* Add objects for shared feed updates.
+
 # v0.4.3
 
 * Add conversation name field to `Conversation` and name update custom content
