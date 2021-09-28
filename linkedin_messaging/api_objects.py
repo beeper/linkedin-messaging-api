@@ -272,8 +272,50 @@ class MessageCustomContent:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class CommentaryText:
+    text: str = ""
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class Commentary:
+    text: Optional[CommentaryText]
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class NavigationContext:
+    tracking_action_type: str = ""
+    action_target: str = ""
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ArticleComponent:
+    navigation_context: Optional[NavigationContext] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ArticleContent:
+    article_component: Optional[ArticleComponent] = field(
+        metadata=config(field_name="com.linkedin.voyager.feed.render.ArticleComponent"),
+        default=None,
+    )
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class FeedUpdate:
+    commentary: Optional[Commentary] = None
+    content: Optional[ArticleContent] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class MessageEvent:
     body: str = ""
+    feed_update: Optional[FeedUpdate] = None
     message_body_render_format: str = ""
     subject: Optional[str] = None
     recalled_at: Optional[datetime] = None
