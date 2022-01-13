@@ -1,6 +1,6 @@
 from datetime import datetime
 from dataclasses import dataclass, field
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, Union
 
 import dataclasses_json
 from dataclasses_json import (
@@ -444,7 +444,7 @@ class SeenReceipt:
 class RealTimeEventStreamEvent(DataClassJsonMixin):
     # Action real-time events (marking as read for example)
     action: Optional[str] = None
-    conversation: Optional[Conversation] = None
+    conversation: Optional[Union[Conversation, URN]] = None
 
     # Message real-time events
     previous_event_in_conversation: Optional[URN] = None
