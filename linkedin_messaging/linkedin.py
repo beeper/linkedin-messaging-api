@@ -468,6 +468,17 @@ class LinkedInMessaging:
 
     # endregion
 
+    # region Typing Notifications
+
+    async def set_typing(self, conversation_urn: URN):
+        await self._post(
+            "/messaging/conversations",
+            params={"action": "typing"},
+            json={"conversationId": conversation_urn.get_id()},
+        )
+
+    # endregion
+
     # region Profiles
 
     async def get_user_profile(self) -> UserProfileResponse:
