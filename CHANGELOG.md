@@ -1,3 +1,8 @@
+# v0.5.1
+
+* Add objects for typing notifications and read receipts.
+* Add `set_typing` function for sending typing notifications.
+
 # v0.5.0
 
 * Add objects for shared feed updates.
