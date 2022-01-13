@@ -434,6 +434,13 @@ class UserProfileResponse(DataClassJsonMixin):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class SeenReceipt:
+    event_urn: URN
+    seen_at: Optional[datetime] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class RealTimeEventStreamEvent(DataClassJsonMixin):
     # Action real-time events (marking as read for example)
     action: Optional[str] = None
@@ -448,6 +455,10 @@ class RealTimeEventStreamEvent(DataClassJsonMixin):
     actor_mini_profile_urn: Optional[URN] = None
     event_urn: Optional[URN] = None
     reaction_summary: Optional[ReactionSummary] = None
+
+    # Seen Receipt real-time events
+    from_entity: Optional[URN] = None
+    seen_receipt: Optional[SeenReceipt] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
