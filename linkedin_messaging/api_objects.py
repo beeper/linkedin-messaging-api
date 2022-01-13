@@ -378,6 +378,7 @@ class Conversation:
     group_chat: bool = False
     total_event_count: int = 0
     unread_count: int = 0
+    read: Optional[bool] = None
     last_activity_at: Optional[datetime] = None
     entity_urn: Optional[URN] = None
     name: str = ""
@@ -434,6 +435,10 @@ class UserProfileResponse(DataClassJsonMixin):
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class RealTimeEventStreamEvent(DataClassJsonMixin):
+    # Action real-time events (marking as read for example)
+    action: Optional[str] = None
+    conversation: Optional[Conversation] = None
+
     # Message real-time events
     previous_event_in_conversation: Optional[URN] = None
     event: Optional[ConversationEvent] = None
