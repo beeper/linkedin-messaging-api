@@ -1,13 +1,11 @@
+import asyncio
 from pathlib import Path
 
-import asyncio
 from linkedin_messaging import ChallengeException, LinkedInMessaging
 from linkedin_messaging.api_objects import URN
 
 cookie_path = Path(__file__).parent.joinpath("cookies.pickle")
-urn = URN(
-    "urn:li:fs_conversation:2-YWM2YTJmYjUtNTdjMS00ZjlmLTgwMDUtOWYxMmMxNjY4M2FlXzAxMg=="
-)
+urn = URN("urn:li:fs_conversation:2-YWM2YTJmYjUtNTdjMS00ZjlmLTgwMDUtOWYxMmMxNjY4M2FlXzAxMg==")
 
 
 async def main():

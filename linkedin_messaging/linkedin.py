@@ -4,22 +4,14 @@ import logging
 import pickle
 from collections import defaultdict
 from datetime import datetime
-from typing import (
-    Any,
-    AsyncGenerator,
-    Awaitable,
-    Callable,
-    cast,
-    Optional,
-    TypeVar,
-    Union,
-)
+from typing import Any, AsyncGenerator, Awaitable, Callable, Optional, TypeVar, Union, cast
 
 import aiohttp
 from bs4 import BeautifulSoup
 from dataclasses_json.api import DataClassJsonMixin
 
 from .api_objects import (
+    URN,
     Conversation,
     ConversationResponse,
     ConversationsResponse,
@@ -30,7 +22,6 @@ from .api_objects import (
     ReactorsResponse,
     RealTimeEventStreamEvent,
     SendMessageResponse,
-    URN,
     UserProfileResponse,
 )
 
@@ -90,8 +81,7 @@ async def try_from_json(deserialise_to: T, response: aiohttp.ClientResponse) -> 
             error = Error.from_json(text)
         except:
             raise Exception(
-                f"Deserialising to {deserialise_to} failed. Error: {e}. "
-                f"Response: {text}."
+                f"Deserialising to {deserialise_to} failed. Error: {e}. " f"Response: {text}."
             )
         raise error
 
@@ -265,9 +255,7 @@ class LinkedInMessaging:
         }
 
         res = await self._get("/messaging/conversations", params=params)
-        return cast(
-            ConversationsResponse, await try_from_json(ConversationsResponse, res)
-        )
+        return cast(ConversationsResponse, await try_from_json(ConversationsResponse, res))
 
     async def get_all_conversations(self) -> AsyncGenerator[Conversation, None]:
         """
@@ -316,9 +304,7 @@ class LinkedInMessaging:
             f"/messaging/conversations/{conversation_urn.id_parts[0]}/events",
             params=params,
         )
-        return cast(
-            ConversationResponse, await try_from_json(ConversationResponse, res)
-        )
+        return cast(ConversationResponse, await try_from_json(ConversationResponse, res))
 
     async def mark_conversation_as_read(self, conversation_urn: URN) -> bool:
         res = await self._post(
@@ -349,9 +335,7 @@ class LinkedInMessaging:
         if upload_metadata_response.status != 200:
             raise Exception("Failed to send upload metadata.")
 
-        upload_metadata_response_json = (await upload_metadata_response.json()).get(
-            "value", {}
-        )
+        upload_metadata_response_json = (await upload_metadata_response.json()).get("value", {})
         upload_url = upload_metadata_response_json.get("singleUploadUrl")
         if not upload_url:
             raise Exception("No upload URL provided")
@@ -381,9 +365,7 @@ class LinkedInMessaging:
         }
 
         if isinstance(conversation_urn_or_recipients, list):
-            message_event["recipients"] = [
-                r.get_id() for r in conversation_urn_or_recipients
-            ]
+            message_event["recipients"] = [r.get_id() for r in conversation_urn_or_recipients]
             message_event["subtype"] = "MEMBER_TO_MEMBER"
             payload = {
                 "keyVersion": "LEGACY_INBOX",
@@ -417,9 +399,7 @@ class LinkedInMessaging:
     async def download_linkedin_media(self, url: str) -> bytes:
         async with self.session.get(url) as media_resp:
             if not media_resp.ok:
-                raise Exception(
-                    f"Failed downloading media. Response code {media_resp.status}"
-                )
+                raise Exception(f"Failed downloading media. Response code {media_resp.status}")
             return await media_resp.content.read()
 
     # endregion
@@ -496,9 +476,7 @@ class LinkedInMessaging:
         )
         async with await self.session.get(url) as profile_resp:
             if not profile_resp.ok:
-                raise Exception(
-                    f"Failed downloading media. Response code {profile_resp.status}"
-                )
+                raise Exception(f"Failed downloading media. Response code {profile_resp.status}")
             return await profile_resp.content.read()
 
     # endregion
@@ -560,19 +538,15 @@ class LinkedInMessaging:
                         try:
                             await handler(data)
                         except Exception:
-                            logging.exception(
-                                f"Handler {handler} failed to handle {data}"
-                            )
+                            logging.exception(f"Handler {handler} failed to handle {data}")
 
-                event_payload = data.get(
-                    "com.linkedin.realtimefrontend.DecoratedEvent", {}
-                ).get("payload", {})
+                event_payload = data.get("com.linkedin.realtimefrontend.DecoratedEvent", {}).get(
+                    "payload", {}
+                )
 
                 for key in self.event_listeners.keys():
                     if event_payload.get(key) is not None:
-                        await self._fire(
-                            key, RealTimeEventStreamEvent.from_dict(event_payload)
-                        )
+                        await self._fire(key, RealTimeEventStreamEvent.from_dict(event_payload))
 
         logging.info("Event stream closed")
 
@@ -587,9 +561,7 @@ class LinkedInMessaging:
                         try:
                             await handler(te)
                         except Exception:
-                            logging.exception(
-                                f"Handler {handler} failed to handle {te}"
-                            )
+                            logging.exception(f"Handler {handler} failed to handle {te}")
             except Exception as e:
                 logging.exception(f"Error listening to event stream: {e}")
                 # Special handling for STREAM_ERROR handler.

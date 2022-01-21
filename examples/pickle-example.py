@@ -1,7 +1,7 @@
+import asyncio
 from pathlib import Path
 
-import asyncio
-from linkedin_messaging import LinkedInMessaging, ChallengeException
+from linkedin_messaging import ChallengeException, LinkedInMessaging
 
 cookie_path = Path(__file__).parent.joinpath("cookies.pickle")
 

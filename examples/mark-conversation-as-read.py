@@ -1,6 +1,6 @@
+import asyncio
 from pathlib import Path
 
-import asyncio
 from linkedin_messaging import ChallengeException, LinkedInMessaging
 from linkedin_messaging.api_objects import URN
 

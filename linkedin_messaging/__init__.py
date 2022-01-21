@@ -1,5 +1,5 @@
-from .linkedin import ChallengeException, LinkedInMessaging
 from .api_objects import URN
+from .linkedin import ChallengeException, LinkedInMessaging
 
 __title__ = "linkedin_messaging"
 __version__ = "0.5.1"

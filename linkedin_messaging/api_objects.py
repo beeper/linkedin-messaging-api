@@ -1,15 +1,9 @@
-from datetime import datetime
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Any, Callable, Optional, Union
 
 import dataclasses_json
-from dataclasses_json import (
-    config,
-    DataClassJsonMixin,
-    dataclass_json,
-    LetterCase,
-    Undefined,
-)
+from dataclasses_json import DataClassJsonMixin, LetterCase, Undefined, config, dataclass_json
 
 
 class URN:
@@ -28,11 +22,7 @@ class URN:
     def __str__(self) -> str:
         return "{}:{}".format(
             self.prefix,
-            (
-                self.id_parts[0]
-                if len(self.id_parts) == 1
-                else "(" + ",".join(self.id_parts) + ")"
-            ),
+            (self.id_parts[0] if len(self.id_parts) == 1 else "(" + ",".join(self.id_parts) + ")"),
         )
 
     def __hash__(self) -> int:
@@ -143,9 +133,7 @@ class AttributeType:
 class Attribute:
     start: int = 0
     length: int = 0
-    type_: Optional[AttributeType] = field(
-        metadata=config(field_name="type"), default=None
-    )
+    type_: Optional[AttributeType] = field(metadata=config(field_name="type"), default=None)
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -263,9 +251,7 @@ class MessageCustomContent:
         default=None,
     )
     third_party_media: Optional[ThirdPartyMedia] = field(
-        metadata=config(
-            field_name="com.linkedin.voyager.messaging.shared.ThirdPartyMedia"
-        ),
+        metadata=config(field_name="com.linkedin.voyager.messaging.shared.ThirdPartyMedia"),
         default=None,
     )
 

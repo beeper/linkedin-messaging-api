@@ -1,8 +1,8 @@
+import asyncio
 import logging
 from pathlib import Path
 
-import asyncio
-from linkedin_messaging import LinkedInMessaging, ChallengeException
+from linkedin_messaging import ChallengeException, LinkedInMessaging
 from linkedin_messaging.api_objects import RealTimeEventStreamEvent
 
 cookie_path = Path(__file__).parent.joinpath("cookies.pickle")
@@ -37,9 +37,7 @@ async def main():
         print(event)
         assert event.event_urn
         assert event.reaction_summary
-        print(
-            await linkedin.get_reactors(event.event_urn, event.reaction_summary.emoji)
-        )
+        print(await linkedin.get_reactors(event.event_urn, event.reaction_summary.emoji))
 
     linkedin.add_event_listener("event", on_event)
     linkedin.add_event_listener("reactionSummary", on_reaction)
