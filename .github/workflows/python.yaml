@@ -30,6 +30,8 @@ jobs:
       run: |
         poetry install
 
+    - uses: isort/isort-action@master
+
     - name: Run lint with black
       run: |
         poetry run black --check .
