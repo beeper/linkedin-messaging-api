@@ -22,7 +22,7 @@ class URN:
     def __str__(self) -> str:
         return "{}:{}".format(
             self.prefix,
-            (self.id_parts[0] if len(self.id_parts) == 1 else "(" + ",".join(self.id_parts) + ")"),
+            (self.id_parts[0] if len(self.id_parts) == 1 else f"({self.id_str()})"),
         )
 
     def __hash__(self) -> int:
