@@ -9,20 +9,19 @@ on:
     types:
       - created
 
+env:
+  PYTHON_VERSION: 3.9
+
 jobs:
   lint:
     name: Run linters
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [ 3.9 ]
-
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python ${{ env.PYTHON_VERSION }}
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: ${{ env.PYTHON_VERSION }}
     - name: Run image
       uses: abatilo/actions-poetry@v2.1.2
 
@@ -54,16 +53,12 @@ jobs:
   test:
     name: Run the tests
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [ 3.9 ]
-
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python ${{ env.PYTHON_VERSION }}
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: ${{ env.PYTHON_VERSION }}
     - name: Run image
       uses: abatilo/actions-poetry@v2.1.2
     - name: Install dependencies
@@ -75,21 +70,17 @@ jobs:
         poetry run pytest -vv > pytest-coverage.txt
     - name: Comment coverage
       uses: coroo/pytest-coverage-commentator@v1.0.2
-      if: ${{ matrix.python-version == '3.9' && github.event_name == 'pull_request' && github.event.action == 'created' }}
+      if: ${{ github.event_name == 'pull_request' && github.event.action == 'created' }}
 
   build:
     name: Build linkedin_messaging
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [ 3.9 ]
-
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python ${{ env.PYTHON_VERSION }}
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: ${{ env.PYTHON_VERSION }}
     - name: Run image
       uses: abatilo/actions-poetry@v2.1.2
     - name: Run build
@@ -103,10 +94,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.9
+    - name: Set up Python ${{ env.PYTHON_VERSION }}
       uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: ${{ env.PYTHON_VERSION }}
     - name: Run image
       uses: abatilo/actions-poetry@v2.1.2
 
@@ -127,10 +118,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.9
+    - name: Set up Python ${{ env.PYTHON_VERSION }}
       uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: ${{ env.PYTHON_VERSION }}
     - name: Run image
       uses: abatilo/actions-poetry@v2.1.2
 
