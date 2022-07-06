@@ -1,3 +1,13 @@
+# v0.5.2
+
+* Parse timestamp from LinkedIn as UTC timestamps in case the server's timezone
+  is different than UTC.
+* Internal:
+
+  * Add isort and pre-commit.
+  * Changed maximum line length from 88 to 99.
+  * Reordered imports to be more in line with other mautrix bridges.
+
 # v0.5.1
 
 * Add objects for typing notifications and read receipts.
