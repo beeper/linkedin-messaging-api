@@ -39,7 +39,7 @@ class URN:
 
 # Use milliseconds instead of seconds from the UNIX epoch.
 decoder_functions = {
-    datetime: (lambda s: datetime.fromtimestamp(int(s) / 1000) if s else None),
+    datetime: (lambda s: datetime.utcfromtimestamp(int(s) / 1000) if s else None),
     URN: (lambda s: URN(s) if s else None),
 }
 encoder_functions: dict[Any, Callable[[Any], Any]] = {
