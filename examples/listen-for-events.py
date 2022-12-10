@@ -45,7 +45,7 @@ async def main():
     task = asyncio.create_task(linkedin.start_listener())
 
     # wait basically forever
-    await asyncio.sleep(2 ** 128)
+    await asyncio.sleep(2**128)
 
     asyncio.gather(task)
 
