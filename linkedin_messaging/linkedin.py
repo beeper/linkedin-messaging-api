@@ -147,6 +147,14 @@ class LinkedInMessaging:
             logging.exception(f"Failed getting the user profile: {e}")
             return False
 
+    async def login_manual(self, li_at: str, jsessionid: str, new_session: bool = True):
+        if new_session:
+            if self.session:
+                await self.session.close()
+            self.session = aiohttp.ClientSession()
+        self.session.cookie_jar.update_cookies({"li_at": li_at, "JSESSIONID": jsessionid})
+        self.session.headers["csrf-token"] = jsessionid.strip('"')
+
     async def login(self, email: str, password: str, new_session: bool = True):
         if new_session:
             if self.session:
