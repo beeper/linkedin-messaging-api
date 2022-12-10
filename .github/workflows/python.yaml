@@ -21,7 +21,7 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ env.PYTHON_VERSION }}
-    - uses: abatilo/actions-poetry@v2.1.5
+    - uses: abatilo/actions-poetry@v2.2.0
     - uses: actions/cache@v3
       with:
         path: ~/.cache/pypoetry/virtualenvs
@@ -59,7 +59,7 @@ jobs:
       with:
         python-version: ${{ env.PYTHON_VERSION }}
     - name: Run image
-      uses: abatilo/actions-poetry@v2.1.2
+      uses: abatilo/actions-poetry@v2.2.0
     - name: Install dependencies
       run: |
         poetry install
@@ -81,7 +81,7 @@ jobs:
       with:
         python-version: ${{ env.PYTHON_VERSION }}
     - name: Run image
-      uses: abatilo/actions-poetry@v2.1.2
+      uses: abatilo/actions-poetry@v2.2.0
     - name: Run build
       run: |
         poetry build
@@ -98,7 +98,7 @@ jobs:
       with:
         python-version: ${{ env.PYTHON_VERSION }}
     - name: Run image
-      uses: abatilo/actions-poetry@v2.1.2
+      uses: abatilo/actions-poetry@v2.2.0
 
     - name: Run build
       run: |
@@ -122,7 +122,7 @@ jobs:
       with:
         python-version: ${{ env.PYTHON_VERSION }}
     - name: Run image
-      uses: abatilo/actions-poetry@v2.1.2
+      uses: abatilo/actions-poetry@v2.2.0
 
     - name: Run build
       run: |
