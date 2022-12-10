@@ -33,7 +33,7 @@ beautifulsoup4 = "^4.9.3"
 dataclasses-json = "^0.5.4"
 
 [tool.poetry.dev-dependencies]
-black = "^21.12b0"
+black = "^22.12"
 docutils = "^0.17.1"
 flake8 = "^4.0.1"
 flake8-annotations = "^2.6.2"
