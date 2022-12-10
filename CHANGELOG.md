@@ -1,3 +1,13 @@
+# v0.5.3
+
+* Add manual login option where you can specify the `li_at` and `JSESSIONID`
+  cookies manually. For example, you could open a private browser window, log
+  in, and extract the cookies from the developer tools.
+
+* Internal:
+
+  * Update GitHub Actions workflow to not use a matrix for Python versions.
+
 # v0.5.2
 
 * Parse timestamp from LinkedIn as UTC timestamps in case the server's timezone
