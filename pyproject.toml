@@ -34,7 +34,7 @@ dataclasses-json = "^0.5.4"
 
 [tool.poetry.dev-dependencies]
 black = "^22.12"
-docutils = "^0.17.1"
+docutils = "^0.19"
 flake8 = "^6.0.0"
 flake8-annotations = "^2.6.2"
 flake8-isort = "^5.0.3"
