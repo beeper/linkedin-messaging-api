@@ -411,19 +411,19 @@ pyflakes = ">=3.0.0,<3.1.0"
 
 [[package]]
 name = "flake8-annotations"
-version = "2.9.1"
+version = "3.0.0"
 description = "Flake8 Type Annotation Checks"
 category = "dev"
 optional = false
-python-versions = ">=3.7,<4.0"
+python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "flake8-annotations-2.9.1.tar.gz", hash = "sha256:11f09efb99ae63c8f9d6b492b75fe147fbc323179fddfe00b2e56eefeca42f57"},
-    {file = "flake8_annotations-2.9.1-py3-none-any.whl", hash = "sha256:a4385158a7a9fc8af1d8820a2f4c8d03387997006a83f5f8bfe5bc6085bdf88a"},
+    {file = "flake8_annotations-3.0.0-py3-none-any.whl", hash = "sha256:ea927d31016515e9aa6e256651d74baeeee6fa4ad3f8383715ec5c0460a4c225"},
+    {file = "flake8_annotations-3.0.0.tar.gz", hash = "sha256:88c8b35a0db10b9a92be69ed3f81494509a18db1c3162551e57bc0fc35fab065"},
 ]
 
 [package.dependencies]
 attrs = ">=21.4"
-flake8 = ">=3.7"
+flake8 = ">=5.0"
 
 [[package]]
 name = "flake8-isort"
@@ -1249,4 +1249,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "cf870f2604b8c0773f263a8c0d9cad9f333a7393e2e2dd2bbd43026444b4131f"
+content-hash = "cb50fff6dd9d90ca92bfb64d3981d220e3a6f32653494eb3170184e71e4bbce7"
