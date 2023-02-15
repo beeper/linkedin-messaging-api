@@ -59,10 +59,12 @@ addopts = """
 """
 
 [build-system]
-requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+requires = [
+  "poetry>=0.12",
+]
 
-[[tool.mypy.overrides]]
+[tool.mypy.overrides]
 module = ["bs4"]
 ignore_missing_imports = true
 
