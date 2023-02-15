@@ -13,7 +13,7 @@ keywords = [
 ]
 license = { file = "LICENSE" }
 authors = [
-    { name = "Sumner Evans", email = "inquiries@sumnerevans.com" },
+    { name = "Sumner Evans", email = "sumner@beeper.com" },
 ]
 requires-python = ">=3.9,<4"
 classifiers = [
@@ -71,7 +71,7 @@ target-version = ["py38"]
 [tool.isort]
 profile = "black"
 combine_as_imports = true
-known_first_party = "mautrix"
+known_first_party = "linkedin_messaging"
 line_length = 99
 
 [tool.pytest.ini_options]
