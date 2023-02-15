@@ -5,7 +5,6 @@ pkgs.mkShell {
   ];
 
   propagatedBuildInputs = with python3Packages; [
-    poetry-core
     python39
   ];
 

@@ -3,7 +3,7 @@ name: Python
 on:
   push:
   pull_request:
-    branches: [ master ]
+    branches: [master]
   release:
     types:
       - created
@@ -16,119 +16,81 @@ jobs:
     name: Run linters
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ env.PYTHON_VERSION }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-    - uses: abatilo/actions-poetry@v2.2.0
-    - uses: actions/cache@v3
-      with:
-        path: ~/.cache/pypoetry/virtualenvs
-        key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
-    - run: poetry install
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
-    - uses: isort/isort-action@master
+      - name: Install dependencies
+        run: |
+          pip install -r dev-requirements.txt
 
-    - name: Run lint with black
-      run: |
-        poetry run black --check .
-
-    - name: Lint with flake8
-      if: always()
-      run: |
-        poetry run flake8 --count --statistics
-
-    - name: Lint with mypy
-      if: always()
-      run: |
-        poetry run mypy .
-
-    - name: Run custom style checks
-      if: always()
-      run: |
-        poetry run cicd/custom_style_check.py
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: --verbose --all-files
 
   test:
     name: Run the tests
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ env.PYTHON_VERSION }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-    - name: Run image
-      uses: abatilo/actions-poetry@v2.2.0
-    - name: Install dependencies
-      run: |
-        poetry install
-    - name: Run pytest
-      run: |
-        poetry run pytest -vv
-        poetry run pytest -vv > pytest-coverage.txt
-    - name: Comment coverage
-      uses: coroo/pytest-coverage-commentator@v1.0.2
-      if: ${{ github.event_name == 'pull_request' && github.event.action == 'created' }}
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install -r dev-requirements.txt
+
+      - name: Run pytest
+        run: |
+          pytest -vv
+          pytest -vv > pytest-coverage.txt
+
+      - name: Comment coverage
+        uses: coroo/pytest-coverage-commentator@v1.0.2
+        if: ${{ github.event_name == 'pull_request' && github.event.action == 'created' }}
 
   build:
     name: Build linkedin_messaging
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ env.PYTHON_VERSION }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-    - name: Run image
-      uses: abatilo/actions-poetry@v2.2.0
-    - name: Run build
-      run: |
-        poetry build
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
-  test_deploy:
-    name: Test Deploy to PyPi
-    runs-on: ubuntu-latest
-    needs: [lint, test, build]
+      - name: Install dependencies
+        run: |
+          pip install -r dev-requirements.txt
 
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ env.PYTHON_VERSION }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-    - name: Run image
-      uses: abatilo/actions-poetry@v2.2.0
-
-    - name: Run build
-      run: |
-        poetry build
-
-    - name: Dry run publish
-      run: |
-        poetry config pypi-token.pypi ${{ secrets.PYPI_DEPLOY_TOKEN }}
-        poetry publish --dry-run
+      - run: flit build
 
   deploy:
     name: Deploy to PyPi
     runs-on: ubuntu-latest
-    needs: [test_deploy]
+    needs: [lint, test, build]
     if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
 
+    env:
+      FLIT_USERNAME: "__token__"
+      FLIT_PASSWORD: ${{ secrets.PYPI_DEPLOY_TOKEN }}
+
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ env.PYTHON_VERSION }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-    - name: Run image
-      uses: abatilo/actions-poetry@v2.2.0
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
-    - name: Run build
-      run: |
-        poetry build
+      - name: Install dependencies
+        run: |
+          pip install -r dev-requirements.txt
 
-    - name: Actual publish
-      run: |
-        poetry config pypi-token.pypi ${{ secrets.PYPI_DEPLOY_TOKEN }}
-        poetry publish
+      - run: flit build
+
+      - run: flit publish

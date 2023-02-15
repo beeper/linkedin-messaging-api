@@ -1,12 +1,21 @@
-[tool.poetry]
-name = "linkedin_messaging"
-version = "0.5.3"
-description = "An unofficial API for interacting with LinkedIn Messaging"
-authors = ["Sumner Evans <inquiries@sumnerevans.com>"]
-license = "Apache-2.0"
+[build-system]
+build-backend = "flit_core.buildapi"
+requires = [
+  "flit_core<4,>=3.2",
+]
+
+[project]
+name = "linkedin-messaging"
 readme = "README.md"
-repository = "https://github.com/sumnerevans/linkedin-messaging-api"
-keywords = ["LinkedIn", "messaging"]
+keywords = [
+  "LinkedIn",
+  "messaging",
+]
+license = { file = "LICENSE" }
+authors = [
+    { name = "Sumner Evans", email = "inquiries@sumnerevans.com" },
+]
+requires-python = ">=3.9,<4"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Framework :: AsyncIO",
@@ -22,30 +31,48 @@ classifiers = [
     "Topic :: Communications :: Chat",
     "Topic :: Software Development :: Libraries",
 ]
+dynamic = [
+  "description",
+  "version",
+]
+dependencies = [
+  "aiohttp",
+  "beautifulsoup4",
+  "dataclasses-json",
+]
+[project.optional-dependencies]
+dev = [
+  "black",
+  "flake8",
+  "flake8-annotations",
+  "flake8-bugbear",
+  "flake8-comprehensions",
+  "flake8-isort",
+  "flake8-pep3101",
+  "flake8-print",
+  "flit",
+  "isort",
+  "mypy",
+  "pip-tools",
+  "pre-commit",
+  "pytest",
+  "pytest-cov",
+  "termcolor",
+  "types-termcolor",
+]
+[project.urls]
+"Bug Tracker" = "https://github.com/beeper/linkedin-messaging-api/issues"
+Homepage = "https://github.com/beeper/linkedin-messaging-api"
 
-[tool.poetry.urls]
-"Bug Tracker" = "https://github.com/sumnerevans/linkedin-messaging-api/issues"
+[tool.black]
+line-length = 99
+target-version = ["py38"]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-aiohttp = "^3.8.0"
-beautifulsoup4 = "^4.9.3"
-dataclasses-json = "^0.5.4"
-
-[tool.poetry.dev-dependencies]
-black = "^22.12"
-flake8 = "^6.0.0"
-flake8-annotations = "^3.0.0"
-flake8-isort = "^6.0.0"
-flake8-pep3101 = "^2.0.0"
-isort = "^5.12.0"
-jedi = "^0.18.0"
-mypy = "^0.991"
-pre-commit = "^3.0.4"
-pytest = "^7.2.1"
-pytest-cov = "^4.0.0"
-termcolor = "^2.2.0"
-types-termcolor = "^1.1.3"
+[tool.isort]
+profile = "black"
+combine_as_imports = true
+known_first_party = "mautrix"
+line_length = 99
 
 [tool.pytest.ini_options]
 addopts = """
@@ -57,22 +84,6 @@ addopts = """
     --cov-report html
     --cov-report term
 """
-
-[build-system]
-build-backend = "poetry.masonry.api"
-requires = [
-  "poetry>=0.12",
-]
-
-[tool.isort]
-profile = "black"
-combine_as_imports = true
-known_first_party = "mautrix"
-line_length = 99
-
-[tool.black]
-line-length = 99
-target-version = ["py38"]
 
 [[tool.mypy.overrides]]
 module = ["bs4"]

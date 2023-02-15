@@ -24,7 +24,6 @@ async def main():
             cf.write(linkedin.to_pickle())
 
     try:
-
         # Get a list of all of the conversations for the given user.
         conversations = await linkedin.get_conversations()
         for c in conversations.elements:

@@ -8,13 +8,6 @@ repos:
       - id: check-yaml
       - id: check-added-large-files
 
-  # poetry check
-  # TODO replace with upstream once poetry has direct pre-commit support
-  - repo: https://github.com/medigateio/poetry-pre-commit
-    rev: 1.1.12-v2
-    hooks:
-      - id: poetry-check
-
   - repo: https://github.com/tox-dev/pyproject-fmt
     rev: 0.9.1
     hooks:
