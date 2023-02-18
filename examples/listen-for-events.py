@@ -39,8 +39,13 @@ async def main():
         assert event.reaction_summary
         print(await linkedin.get_reactors(event.event_urn, event.reaction_summary.emoji))
 
+    async def all_events(event):
+        print("ALL EVENTS")
+        print(event)
+
     linkedin.add_event_listener("event", on_event)
     linkedin.add_event_listener("reactionSummary", on_reaction)
+    linkedin.add_event_listener("ALL_EVENTS", all_events)
 
     task = asyncio.create_task(linkedin.start_listener())
 

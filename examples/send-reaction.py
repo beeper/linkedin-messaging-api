@@ -20,7 +20,7 @@ async def main():
 
     if not await linkedin.logged_in():
         try:
-            await linkedin.login("li-1@sumnerevans.com", "oheaqfuy1243")
+            await linkedin.login("EMAIL", "PASSWORD")
         except ChallengeException:
             await linkedin.enter_2fa(input("2fa code: "))
 
