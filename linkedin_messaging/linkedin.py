@@ -564,8 +564,8 @@ class LinkedInMessaging:
                 await self._listen_to_event_stream()
             except asyncio.exceptions.TimeoutError as te:
                 # Special handling for TIMEOUT handler.
-                if all_events_handlers := self.event_listeners.get("TIMEOUT"):
-                    for handler in all_events_handlers:
+                if timeout_handlers := self.event_listeners.get("TIMEOUT"):
+                    for handler in timeout_handlers:
                         try:
                             await handler(te)
                         except Exception:
@@ -573,8 +573,8 @@ class LinkedInMessaging:
             except Exception as e:
                 logging.exception(f"Error listening to event stream: {e}")
                 # Special handling for STREAM_ERROR handler.
-                if all_events_handlers := self.event_listeners.get("STREAM_ERROR"):
-                    for handler in all_events_handlers:
+                if stream_error_handlers := self.event_listeners.get("STREAM_ERROR"):
+                    for handler in stream_error_handlers:
                         try:
                             await handler(e)
                         except Exception:
