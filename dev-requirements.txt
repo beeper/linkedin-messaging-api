@@ -124,7 +124,7 @@ platformdirs==3.0.0
     #   virtualenv
 pluggy==1.0.0
     # via pytest
-pre-commit==3.1.0
+pre-commit==3.1.1
     # via linkedin_messaging (pyproject.toml)
 pycodestyle==2.10.0
     # via
