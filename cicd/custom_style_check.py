@@ -67,5 +67,4 @@ if "CHANGELOG.md" in sys.argv:
     with open(Path("CHANGELOG.md")) as f:
         assert f.readline().strip() == f"# v{version}", "Version mismatch: CHANGELOG"
 
-
 sys.exit(0 if valid else 1)

@@ -7,6 +7,7 @@ from datetime import datetime
 from typing import Any, AsyncGenerator, Awaitable, Callable, Optional, TypeVar, Union, cast
 
 import aiohttp
+import aiohttp.client_exceptions
 from bs4 import BeautifulSoup
 from dataclasses_json.api import DataClassJsonMixin
 
@@ -501,12 +502,10 @@ class LinkedInMessaging:
         ],
     ):
         """
-        There are three special event types:
+        There is one special event type:
 
-        * ALL_EVENTS - an event fired on every event, and which contains the entirety of
-            the raw event payload
-        * TIMEOUT - an event fired if the event listener connection times out
-        * STREAM_ERROR - an event fired if the event stream errors for any other reason
+        * ``ALL_EVENTS`` - an event fired on every event, and which contains the entirety of the
+          raw event payload
         """
         self.event_listeners[payload_key].append(fn)
 
@@ -571,13 +570,7 @@ class LinkedInMessaging:
                         except Exception:
                             logging.exception(f"Handler {handler} failed to handle {te}")
             except Exception as e:
-                logging.exception(f"Error listening to event stream: {e}")
-                # Special handling for STREAM_ERROR handler.
-                if stream_error_handlers := self.event_listeners.get("STREAM_ERROR"):
-                    for handler in stream_error_handlers:
-                        try:
-                            await handler(e)
-                        except Exception:
-                            logging.exception(f"Handler {handler} failed to handle {e}")
+                logging.exception(f"Got exception in listener: {e}")
+                raise
 
     # endregion
