@@ -25,6 +25,7 @@ from .api_objects import (
     SendMessageResponse,
     UserProfileResponse,
 )
+from .exceptions import TooManyRequestsError
 
 REQUEST_HEADERS = {
     "user-agent": " ".join(
@@ -528,7 +529,7 @@ class LinkedInMessaging:
             timeout=120,
         ) as resp:
             if resp.status != 200:
-                raise Exception(f"Failed to connect. Status {resp.status}.")
+                raise TooManyRequestsError(f"Failed to connect. Status {resp.status}.")
 
             while True:
                 line = await resp.content.readline()
