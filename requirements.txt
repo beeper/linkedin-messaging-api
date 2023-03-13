@@ -14,7 +14,7 @@ attrs==22.2.0
     # via aiohttp
 beautifulsoup4==4.11.2
     # via linkedin_messaging (pyproject.toml)
-charset-normalizer==3.0.1
+charset-normalizer==3.1.0
     # via aiohttp
 dataclasses-json==0.5.7
     # via linkedin_messaging (pyproject.toml)
