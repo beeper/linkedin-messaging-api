@@ -4,7 +4,7 @@ from .api_objects import URN
 from .linkedin import ChallengeException, LinkedInMessaging
 
 __title__ = "linkedin_messaging"
-__version__ = "0.5.4"
+__version__ = "0.5.5"
 __description__ = "An unofficial API for interacting with LinkedIn Messaging"
 
 __license__ = "Apache License 2.0"

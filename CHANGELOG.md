@@ -1,3 +1,8 @@
+# v0.5.5
+
+* Add back support for the `TIMEOUT` special event. All other errors still need
+  to be handled by API consumers.
+
 # v0.5.4
 
 * Fix the `__license__` property in the package.
