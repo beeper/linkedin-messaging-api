@@ -1,3 +1,26 @@
+# v0.5.4
+
+* Fix the `__license__` property in the package.
+* Added some objects to support posts media. Contributed by @mehdiirh in #5
+* Dropped support for the `STREAM_ERROR` and `TIMEOUT` special events. Consumers
+  of that API should just handle errors thrown by the `start_listener` call
+  and perform the appropriate error mitigations.
+
+* Examples
+
+  * Add `ALL_EVENTS` listener example.
+
+* Internal:
+
+  * Convert to flit for managing the package and dependencies.
+
+* Developer experience:
+
+  * Add dependabot for GitHub Actions and Python requirements.
+  * Use [pre-commit/action](https://github.com/pre-commit/action) for linting in
+    CI.
+  * Update all of the pre-commit hooks.
+
 # v0.5.3
 
 * Add manual login option where you can specify the `li_at` and `JSESSIONID`
