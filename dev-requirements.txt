@@ -42,7 +42,7 @@ distlib==0.3.6
     # via virtualenv
 docutils==0.19
     # via flit
-exceptiongroup==1.1.0
+exceptiongroup==1.1.1
     # via pytest
 filelock==3.9.0
     # via virtualenv
