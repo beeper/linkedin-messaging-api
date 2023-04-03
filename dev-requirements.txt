@@ -114,7 +114,7 @@ packaging==23.0
     #   build
     #   marshmallow
     #   pytest
-pathspec==0.11.0
+pathspec==0.11.1
     # via black
 pip-tools==6.12.3
     # via linkedin_messaging (pyproject.toml)
