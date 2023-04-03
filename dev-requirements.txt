@@ -18,7 +18,7 @@ attrs==22.2.0
     #   pytest
 beautifulsoup4==4.11.2
     # via linkedin_messaging (pyproject.toml)
-black==23.1.0
+black==23.3.0
     # via linkedin_messaging (pyproject.toml)
 build==0.10.0
     # via pip-tools
