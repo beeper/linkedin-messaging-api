@@ -42,7 +42,7 @@ soupsieve==2.4
     # via beautifulsoup4
 typing-extensions==4.5.0
     # via typing-inspect
-typing-inspect==0.8.0
+typing-inspect==0.9.0
     # via dataclasses-json
 yarl==1.8.2
     # via aiohttp
