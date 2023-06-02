@@ -16,7 +16,7 @@ attrs==22.2.0
     #   flake8-annotations
     #   flake8-bugbear
     #   pytest
-beautifulsoup4==4.11.2
+beautifulsoup4==4.12.2
     # via linkedin_messaging (pyproject.toml)
 black==23.3.0
     # via linkedin_messaging (pyproject.toml)
