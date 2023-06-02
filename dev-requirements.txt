@@ -108,7 +108,7 @@ mypy-extensions==1.0.0
     #   typing-inspect
 nodeenv==1.8.0
     # via pre-commit
-packaging==23.0
+packaging==23.1
     # via
     #   black
     #   build
