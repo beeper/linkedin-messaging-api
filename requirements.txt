@@ -12,7 +12,7 @@ async-timeout==4.0.2
     # via aiohttp
 attrs==22.2.0
     # via aiohttp
-beautifulsoup4==4.11.2
+beautifulsoup4==4.12.2
     # via linkedin_messaging (pyproject.toml)
 charset-normalizer==3.1.0
     # via aiohttp
