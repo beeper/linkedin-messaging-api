@@ -36,7 +36,7 @@ multidict==6.0.4
     #   yarl
 mypy-extensions==1.0.0
     # via typing-inspect
-packaging==23.0
+packaging==23.1
     # via marshmallow
 soupsieve==2.4
     # via beautifulsoup4
