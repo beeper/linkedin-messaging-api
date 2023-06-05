@@ -142,7 +142,7 @@ pytest-cov==4.0.0
     # via linkedin_messaging (pyproject.toml)
 pyyaml==6.0
     # via pre-commit
-requests==2.28.2
+requests==2.31.0
     # via flit
 soupsieve==2.4
     # via beautifulsoup4
