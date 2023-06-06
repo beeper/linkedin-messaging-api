@@ -9,13 +9,13 @@ repos:
       - id: check-added-large-files
 
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: 0.9.2
+    rev: 0.11.2
     hooks:
       - id: pyproject-fmt
 
   # black
   - repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: 23.3.0
     hooks:
       - id: black
         files: ^(linkedin_messaging|tests)/.*$
@@ -36,7 +36,7 @@ repos:
 
   # mypy
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.1.1
+    rev: v1.3.0
     hooks:
       - id: mypy
         additional_dependencies: [types-termcolor==1.1.3]
