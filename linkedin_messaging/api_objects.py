@@ -171,6 +171,21 @@ class MessageAttachment:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class AudioMetadata:
+    urn: Optional[URN]
+    duration: int = 0
+    url: str = ""
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class MediaAttachment:
+    media_type: str = ""
+    audio_metadata: Optional[AudioMetadata] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class GifInfo:
     original_height: int = 0
     original_width: int = 0
@@ -392,6 +407,7 @@ class MessageEvent:
     recalled_at: Optional[datetime] = None
     attributed_body: Optional[AttributedBody] = None
     attachments: list[MessageAttachment] = field(default_factory=list)
+    media_attachments: list[MediaAttachment] = field(default_factory=list)
     custom_content: Optional[MessageCustomContent] = None
 
 
