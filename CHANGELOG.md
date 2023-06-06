@@ -1,3 +1,8 @@
+# v0.5.6
+
+* Added objects to support voice messages.
+* Updated versions of many dependencies and all of the pre-commit hooks.
+
 # v0.5.5
 
 * Add back support for the `TIMEOUT` special event. All other errors still need
