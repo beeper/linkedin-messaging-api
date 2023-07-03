@@ -160,7 +160,7 @@ tomli-w==1.0.0
     # via flit
 types-termcolor==1.1.6.2
     # via linkedin_messaging (pyproject.toml)
-typing-extensions==4.5.0
+typing-extensions==4.7.1
     # via
     #   black
     #   mypy

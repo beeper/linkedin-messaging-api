@@ -40,7 +40,7 @@ packaging==23.1
     # via marshmallow
 soupsieve==2.4
     # via beautifulsoup4
-typing-extensions==4.5.0
+typing-extensions==4.7.1
     # via typing-inspect
 typing-inspect==0.9.0
     # via dataclasses-json
