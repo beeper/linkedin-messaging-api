@@ -1,3 +1,7 @@
+# v0.5.7
+
+* Added objects to support message edits.
+
 # v0.5.6
 
 * Added objects to support voice messages.
