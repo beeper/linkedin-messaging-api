@@ -405,6 +405,7 @@ class MessageEvent:
     message_body_render_format: str = ""
     subject: Optional[str] = None
     recalled_at: Optional[datetime] = None
+    last_edited_at: Optional[datetime] = None
     attributed_body: Optional[AttributedBody] = None
     attachments: list[MessageAttachment] = field(default_factory=list)
     media_attachments: list[MediaAttachment] = field(default_factory=list)
