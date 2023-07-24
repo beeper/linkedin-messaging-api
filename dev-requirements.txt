@@ -167,7 +167,7 @@ urllib3==2.0.3
     # via requests
 virtualenv==20.24.0
     # via pre-commit
-wheel==0.40.0
+wheel==0.41.0
     # via pip-tools
 yarl==1.9.2
     # via aiohttp
