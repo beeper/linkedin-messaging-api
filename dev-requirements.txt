@@ -23,7 +23,7 @@ build==0.10.0
     # via pip-tools
 certifi==2023.7.22
     # via requests
-cfgv==3.3.1
+cfgv==3.4.0
     # via pre-commit
 charset-normalizer==3.2.0
     # via
