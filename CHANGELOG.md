@@ -1,3 +1,8 @@
+# v0.6.0
+
+* Removed ability to pickle the `LinkedInMessaging` cookies. Use `from_cookies`
+  and pass `JSESSIONID` and `li_at` individually.
+
 # v0.5.7
 
 * Added objects to support message edits.
