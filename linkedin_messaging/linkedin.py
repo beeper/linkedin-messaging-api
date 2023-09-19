@@ -1,7 +1,6 @@
 import asyncio
 import json
 import logging
-import pickle
 from collections import defaultdict
 from datetime import datetime
 from typing import Any, AsyncGenerator, Awaitable, Callable, Optional, TypeVar, Union, cast
@@ -111,18 +110,11 @@ class LinkedInMessaging:
         self.event_listeners = defaultdict(list)
 
     @staticmethod
-    def from_pickle(pickle_byte_str: bytes) -> "LinkedInMessaging":
+    def from_cookies(li_at: str, jsessionid: str) -> "LinkedInMessaging":
         linkedin = LinkedInMessaging()
-        assert isinstance(linkedin.session.cookie_jar, aiohttp.CookieJar)
-        linkedin.session.cookie_jar._cookies = pickle.loads(pickle_byte_str)
-        for c in linkedin.session.cookie_jar:
-            if c.key == "JSESSIONID":
-                linkedin.session.headers["csrf-token"] = c.value.strip('"')
+        linkedin.session.cookie_jar.update_cookies({"li_at": li_at, "JSESSIONID": jsessionid})
+        linkedin.session.headers["csrf-token"] = jsessionid
         return linkedin
-
-    def to_pickle(self) -> bytes:
-        assert isinstance(self.session.cookie_jar, aiohttp.CookieJar)
-        return pickle.dumps(self.session.cookie_jar._cookies, pickle.HIGHEST_PROTOCOL)
 
     async def close(self):
         await self.session.close()
