@@ -4,10 +4,12 @@
 #
 #    pip-compile --extra=dev --output-file=dev-requirements.txt pyproject.toml
 #
-aiohttp==3.8.5
+aiohttp==3.9.1
     # via linkedin-messaging (pyproject.toml)
 aiosignal==1.3.1
     # via aiohttp
+annotated-types==0.6.0
+    # via pydantic
 async-timeout==4.0.3
     # via aiohttp
 attrs==23.1.0
@@ -17,33 +19,37 @@ attrs==23.1.0
     #   flake8-bugbear
 beautifulsoup4==4.12.2
     # via linkedin-messaging (pyproject.toml)
-black==23.7.0
+black==23.11.0
     # via linkedin-messaging (pyproject.toml)
-build==0.10.0
+build==1.0.3
     # via pip-tools
-certifi==2023.7.22
+cerberus==1.3.5
+    # via plette
+certifi==2023.11.17
     # via requests
-cfgv==3.3.1
+cfgv==3.4.0
     # via pre-commit
-charset-normalizer==3.2.0
-    # via
-    #   aiohttp
-    #   requests
-click==8.1.6
+charset-normalizer==3.3.2
+    # via requests
+click==8.1.7
     # via
     #   black
     #   pip-tools
-coverage[toml]==7.2.7
+coverage[toml]==7.3.2
     # via pytest-cov
-dataclasses-json==0.5.14
+dataclasses-json==0.6.3
     # via linkedin-messaging (pyproject.toml)
 distlib==0.3.7
-    # via virtualenv
+    # via
+    #   requirementslib
+    #   virtualenv
+docopt==0.6.2
+    # via pipreqs
 docutils==0.20.1
     # via flit
-exceptiongroup==1.1.2
+exceptiongroup==1.2.0
     # via pytest
-filelock==3.12.2
+filelock==3.13.1
     # via virtualenv
 flake8==6.1.0
     # via
@@ -56,13 +62,13 @@ flake8==6.1.0
     #   linkedin-messaging (pyproject.toml)
 flake8-annotations==3.0.1
     # via linkedin-messaging (pyproject.toml)
-flake8-bugbear==23.7.10
+flake8-bugbear==23.12.2
     # via linkedin-messaging (pyproject.toml)
 flake8-comprehensions==3.14.0
     # via linkedin-messaging (pyproject.toml)
-flake8-isort==6.0.0
+flake8-isort==6.1.1
     # via linkedin-messaging (pyproject.toml)
-flake8-pep3101==2.0.0
+flake8-pep3101==2.1.0
     # via linkedin-messaging (pyproject.toml)
 flake8-print==5.0.0
     # via linkedin-messaging (pyproject.toml)
@@ -74,15 +80,17 @@ frozenlist==1.4.0
     # via
     #   aiohttp
     #   aiosignal
-identify==2.5.26
+identify==2.5.33
     # via pre-commit
-idna==3.4
+idna==3.6
     # via
     #   requests
     #   yarl
+importlib-metadata==7.0.0
+    # via build
 iniconfig==2.0.0
     # via pytest
-isort==5.12.0
+isort==5.13.0
     # via
     #   flake8-isort
     #   linkedin-messaging (pyproject.toml)
@@ -94,7 +102,7 @@ multidict==6.0.4
     # via
     #   aiohttp
     #   yarl
-mypy==1.5.0
+mypy==1.7.1
     # via linkedin-messaging (pyproject.toml)
 mypy-extensions==1.0.0
     # via
@@ -103,33 +111,46 @@ mypy-extensions==1.0.0
     #   typing-inspect
 nodeenv==1.8.0
     # via pre-commit
-packaging==23.1
+packaging==23.2
     # via
     #   black
     #   build
     #   marshmallow
     #   pytest
-pathspec==0.11.2
+pathspec==0.12.1
     # via black
+pep517==0.13.1
+    # via requirementslib
+pip-api==0.0.30
+    # via isort
 pip-tools==7.3.0
     # via linkedin-messaging (pyproject.toml)
-platformdirs==3.10.0
+pipreqs==0.4.13
+    # via isort
+platformdirs==4.1.0
     # via
     #   black
+    #   requirementslib
     #   virtualenv
-pluggy==1.2.0
+plette[validation]==0.4.4
+    # via requirementslib
+pluggy==1.3.0
     # via pytest
-pre-commit==3.3.3
+pre-commit==3.6.0
     # via linkedin-messaging (pyproject.toml)
-pycodestyle==2.11.0
+pycodestyle==2.11.1
     # via
     #   flake8
     #   flake8-print
+pydantic==2.5.2
+    # via requirementslib
+pydantic-core==2.14.5
+    # via pydantic
 pyflakes==3.1.0
     # via flake8
 pyproject-hooks==1.0.0
     # via build
-pytest==7.4.0
+pytest==7.4.3
     # via
     #   linkedin-messaging (pyproject.toml)
     #   pytest-cov
@@ -138,10 +159,15 @@ pytest-cov==4.1.0
 pyyaml==6.0.1
     # via pre-commit
 requests==2.31.0
-    # via flit
-soupsieve==2.4.1
+    # via
+    #   flit
+    #   requirementslib
+    #   yarg
+requirementslib==3.0.0
+    # via isort
+soupsieve==2.5
     # via beautifulsoup4
-termcolor==2.3.0
+termcolor==2.4.0
     # via linkedin-messaging (pyproject.toml)
 tomli==2.0.1
     # via
@@ -149,28 +175,39 @@ tomli==2.0.1
     #   build
     #   coverage
     #   mypy
+    #   pep517
     #   pip-tools
     #   pyproject-hooks
     #   pytest
 tomli-w==1.0.0
     # via flit
+tomlkit==0.12.3
+    # via
+    #   plette
+    #   requirementslib
 types-termcolor==1.1.6.2
     # via linkedin-messaging (pyproject.toml)
-typing-extensions==4.7.1
+typing-extensions==4.9.0
     # via
     #   black
     #   mypy
+    #   pydantic
+    #   pydantic-core
     #   typing-inspect
 typing-inspect==0.9.0
     # via dataclasses-json
-urllib3==2.0.4
+urllib3==2.1.0
     # via requests
-virtualenv==20.24.2
+virtualenv==20.25.0
     # via pre-commit
-wheel==0.41.1
+wheel==0.42.0
     # via pip-tools
-yarl==1.9.2
+yarg==0.1.9
+    # via pipreqs
+yarl==1.9.4
     # via aiohttp
+zipp==3.17.0
+    # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
