@@ -1,3 +1,5 @@
+# DEPRECATED: moved into https://github.com/beeper/linkedin
+
 # LinkedIn Messaging API
 
 [![Python](https://github.com/sumnerevans/linkedin-messaging-api/actions/workflows/python.yaml/badge.svg)](https://github.com/sumnerevans/linkedin-messaging-api/actions/workflows/python.yaml)
