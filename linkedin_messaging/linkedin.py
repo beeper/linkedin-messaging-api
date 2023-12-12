@@ -34,15 +34,16 @@ REQUEST_HEADERS = {
             "Chrome/83.0.4103.116 Safari/537.36",
         ]
     ),
-    # "accept": "application/vnd.linkedin.normalized+json+2.1",
     "accept-language": "en-AU,en-GB;q=0.9,en-US;q=0.8,en;q=0.7",
     "x-li-lang": "en_US",
     "x-restli-protocol-version": "2.0.0",
     "x-li-track": json.dumps(
         {
-            "clientVersion": "1.2.6216",
+            "clientVersion": "1.13.8031",
+            "mpVersion": "1.13.8031",
             "osName": "web",
-            "timezoneOffset": 10,
+            "timezoneOffset": 0,
+            "timezone": "Etc/UTC",
             "deviceFormFactor": "DESKTOP",
             "mpName": "voyager-web",
         }
@@ -517,7 +518,12 @@ class LinkedInMessaging:
 
         async with self.session.get(
             REALTIME_CONNECT_URL,
-            headers={"content-type": "text/event-stream", **REQUEST_HEADERS},
+            headers={
+                "accept": "text/event-stream",
+                "connection": "keep-alive",
+                "x-li-accept": "application/vnd.linkedin.normalized+json+2.1",
+                **REQUEST_HEADERS,
+            },
             # The event stream normally stays open for about 3 minutes, but this will
             # automatically close it more agressively so that we don't get into a weird
             # state where it's not receiving any data, but simultaneously isn't closed.
