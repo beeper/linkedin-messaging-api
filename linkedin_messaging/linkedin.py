@@ -49,16 +49,18 @@ REQUEST_HEADERS = {
     ),
 }
 
-# URL to seed all of the auth requests
-HEARTBEAT_URL = "https://realtime.www.linkedin.com/realtime/realtimeFrontendClientConnectivityTracking"  # noqa: E501
-LOGIN_URL = "https://www.linkedin.com/checkpoint/lg/login-submit"
-LOGOUT_URL = "https://www.linkedin.com/uas/logout"
-REALTIME_CONNECT_URL = "https://realtime.www.linkedin.com/realtime/connect"
-SEED_URL = "https://www.linkedin.com/uas/login"
-VERIFY_URL = "https://www.linkedin.com/checkpoint/challenge/verify"
-
 LINKEDIN_BASE_URL = "https://www.linkedin.com"
+LOGIN_URL = f"{LINKEDIN_BASE_URL}/checkpoint/lg/login-submit"
+LOGOUT_URL = f"{LINKEDIN_BASE_URL}/uas/logout"
+REALTIME_CONNECT_URL = f"{LINKEDIN_BASE_URL}/realtime/connect"
+VERIFY_URL = f"{LINKEDIN_BASE_URL}/checkpoint/challenge/verify"
 API_BASE_URL = f"{LINKEDIN_BASE_URL}/voyager/api"
+
+SEED_URL = f"{LINKEDIN_BASE_URL}/login"
+"""
+URL to seed all of the auth requests
+"""
+
 
 T = TypeVar("T", bound=DataClassJsonMixin)
 
